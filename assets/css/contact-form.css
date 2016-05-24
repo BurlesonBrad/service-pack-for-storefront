@@ -1,0 +1,49 @@
+#ssp-contact-form-send {
+	margin-top: 15px;
+  width: 100%;
+}
+#ssp-contact-form-send:after {
+	content: "\f1d8";
+	font-family: 'FontAwesome';
+}
+#ssp-contact-form label {
+  display: block;
+}
+#ssp-contact-form input {
+  margin-bottom: 15px;
+  width: 100%;
+}
+#ssp-contact-form-message {
+	height: 237px;
+}
+
+@media screen and (min-width: 768px) {
+	#ssp-contact-form {
+		display: flex;
+		flex-flow: wrap;
+	}
+	.ssp-contact-form-panel-left {
+		margin-right: 15px;
+	}
+  .ssp-contact-form-panel-rigth {
+		flex: 1 1 auto;
+	}
+}
+
+#ssp-contact-form-noty {
+	color: #fff;
+	display: none;
+	font-size: 15px;
+	padding: 15px;
+	position: fixed;
+	text-align: center;
+	top: 0;
+	width: 100%;
+	z-index: 999;
+}
+#ssp-contact-form-noty.ssp-contact-form-noty-error {
+	background-color: #FF0000;
+}
+#ssp-contact-form-noty.ssp-contact-form-noty-success {
+	background-color: #44a62b;
+}
