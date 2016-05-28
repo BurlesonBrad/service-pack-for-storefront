@@ -19,4 +19,5 @@ require_once( SSP_DIR . 'class-ssp.php' );
 $SSP = SSP::get_instance();
 
 register_activation_hook( __FILE__, array( $SSP, 'init_db' ) );
+//TODO: use uninstall hook instead.
 register_deactivation_hook( __FILE__, array( $SSP, 'clean_db' ) );
