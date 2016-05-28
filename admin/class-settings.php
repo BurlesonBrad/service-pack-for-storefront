@@ -27,7 +27,7 @@ class SSP_Settings {
       'name'         => 'Dynamic Sidebar',
       'type'         => 'checkbox',
       'section'      => 'ssp_settings_modules_activation',
-      'description'  => 'Adds specific sidebar for for product page, product category page, post page, etc...'
+      'description'  => 'Adds specific sidebar for product page, product category page, post page, etc...'
     ),
     'float_menu'     => array(
       'name'         => 'Float Menu',
@@ -150,8 +150,25 @@ class SSP_Settings {
       'modulable'        => 'order_tracking'
     )
   );
+
+  private static $instance;
+
+  public static function get_instance() {
+    if ( is_null( self::$instance ) ) {
+      self::$instance = new SSP_Settings();
+    }
+    return self::$instance;
+  }
+
+  public function get_settings_fields() {
+    return $this->settings_fields;
+  }
+  
+  public function get_settings_sections() {
+    return $this->settings_sections;
+  }
  
-  public function __construct() {
+  private function __construct() {
     add_action( 'admin_menu', array( $this, 'init_options_page' ) );
     add_action( 'admin_init', array( $this, 'init_settings_sections' ) );
     add_action( 'admin_init', array( $this, 'init_settings_fields' ) );
@@ -190,15 +207,23 @@ class SSP_Settings {
     $options = get_option( 'ssp_settings' );
     // Add dynamically new pair of setting fields for the 'order_tracking' option group
     if ( isset( $options['order_tracking'] ) ) {
-      $field_number = 0;
-      $shipper_number = count( preg_grep( '#^shipper_name#', array_keys( $options['order_tracking'] ) ) );
-      while ( $field_number < $shipper_number ) {
-        $field_number ++;
-        $new_fields = array(
-          'shipper_name_' . $field_number => $this->settings_fields['shipper_name_0'],
-          'shipper_url_' . $field_number  => $this->settings_fields['shipper_url_0']
-        );
-        $this->settings_fields = array_merge( $this->settings_fields, $new_fields );
+      $shippers = preg_grep( '#^shipper_name#', array_keys( $options['order_tracking'] ) );
+      $shipper_number = 0;
+      foreach( $shippers as $shipper ) {
+        if ( ! is_null( $options['order_tracking'][$shipper] ) ) {
+          $shipper_number ++;
+        }
+      }
+      if ( $shipper_number ) {
+        $field_number = 1;
+        while ( $field_number <= $shipper_number ) {
+          $new_fields = array(
+            'shipper_name_' . $field_number => $this->settings_fields['shipper_name_0'],
+            'shipper_url_' . $field_number  => $this->settings_fields['shipper_url_0']
+          );
+          $this->settings_fields = array_merge( $this->settings_fields, $new_fields );
+          $field_number ++;
+        }
       }
     }
     foreach ( $this->settings_fields as $field => $setting ) {
@@ -226,12 +251,23 @@ class SSP_Settings {
   }
 
   public function sanitization( $input ) {
-    // Not checking $input keys...
-    // Maybe something like shortcode_attr() is a solution...
     foreach ( $input as $section => $fields ) {
+      if ( ! isset( $this->settings_sections[$section] ) ) {
+        return;
+      }
       foreach ( $fields as $field => $setting ) {
+        if ( ! isset( $this->settings_fields[$field] ) ) {
+          $key = substr( $field, 0, -2 ) . '_0';
+          // TODO test it...
+          if ( empty( array_keys( $this->settings_fields, $key ) ) ) {
+            return;
+          }
+        }
         if ( ! empty( $setting ) ) {
           $output[$section][$field] = sanitize_text_field( stripslashes( $setting ) );
+        }
+        else {
+          $output[$section][$field] = null;
         }
       }
     }
@@ -262,6 +298,7 @@ class SSP_Settings {
     $description   = isset( $this->settings_fields[$field]['description'] ) ? $this->settings_fields[$field]['description'] : false;
     
     if ( $type === 'checkbox' ) {
+      echo '<input type="hidden" name="' . $name . '" value="0">';
       echo '<input type="' . $type . '" id="' . $slug . '" name="' . $name . '" value="1" ' . checked( 1, $value, false ) . ' />';
       if ( ! empty( $description ) ) {
         echo '<label for="' . $slug . '">' . __( $description, 'ssp' ) . '</label>';
@@ -272,9 +309,9 @@ class SSP_Settings {
       $style   = '';
       if ( $section === 'order_tracking' && ! empty( $value ) ) {
         $special = true;
-        $style = 'style="background-color: #f2f2f2"';
+        $style = ' style="background-color: #f2f2f2"';
       }
-      echo '<input type="' . $type . '" id="' . $slug . '" name="' . $name . '" value="' . esc_attr( $value ) . '" class="regular-text" ' . $style . ' />';
+      echo '<input type="' . $type . '" id="' . $slug . '" name="' . $name . '" value="' . esc_attr( $value ) . '" class="regular-text"' . $style . ' />';
       if ( ! empty( $description ) && ! $special ) {
         echo '<p class="description">' . __( $description, 'ssp' ) . '</p>';
       }

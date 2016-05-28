@@ -39,12 +39,12 @@ class SSP_Widget_Newsletter extends WP_Widget {
     $errors = new WP_Error;
     // Response Messages
     $response_message = array(
-		  too_long_email    => 'The maximum length of you email address is 50 characters.',
-		  invalid_email     => 'Invalid email address.',
-		  missing_email     => 'Don\'t forget your email address...',
-		  already_subcribed => 'You are already subcribed to our newsletter...',
-		  insertion_failure => 'Sorry but you can not subscribe to our newsletter because something not predicted happened, please try again.',
-		  success           => 'Thank you for subscribing to our newsletter !'
+		  'too_long_email'    => 'The maximum length of you email address is 50 characters.',
+		  'invalid_email'     => 'Invalid email address.',
+		  'missing_email'     => 'Don\'t forget your email address...',
+		  'already_subcribed' => 'You are already subcribed to our newsletter...',
+		  'insertion_failure' => 'Sorry but you can not subscribe to our newsletter because something not predicted happened, please try again.',
+		  'success'           => 'Thank you for subscribing to our newsletter !'
     );
     if ( isset( $_POST['ssp_widget_newsletter_email'] ) && ! empty( $_POST['ssp_widget_newsletter_email'] ) ) {
 			$email = $_POST['ssp_widget_newsletter_email'];

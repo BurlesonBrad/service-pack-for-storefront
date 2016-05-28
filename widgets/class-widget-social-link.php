@@ -17,38 +17,20 @@ class SSP_Widget_Social_Link extends WP_Widget {
 	
 	public function widget( $args, $instance ) {
     $options = get_option( 'ssp_settings' );
-    $page_url_facebook   = isset( $options['social_network']['facebook'] ) ? $options['social_network']['facebook'] : null;
-    $page_url_twitter    = isset( $options['social_network']['twitter'] ) ? $options['social_network']['twitter'] : null;
-    $page_url_googleplus = isset( $options['social_network']['googleplus'] ) ? $options['social_network']['googleplus'] : null;
-    $page_url_instagram  = isset( $options['social_network']['instagram'] ) ? $options['social_network']['instagram'] : null;
-    $page_url_youtube    = isset( $options['social_network']['youtube'] ) ? $options['social_network']['youtube'] : null;
+    if ( empty( $options['social_network'] ) ) return;
 
     echo $args['before_widget'];
 		echo $args['before_title'];
 		echo apply_filters( 'widget_title', $instance['title'] );
-		echo $args['after_title']; ?>
+		echo $args['after_title'];
 		
-		<div class="ssp-widget-social-link">
-      <ul class="ssp-widget-social-link-list"><?php
-        if ( isset( $page_url_facebook ) ) { ?>
-          <li><a class="ssp-widget-social-link-facebook" rel="external" href="<?php echo esc_url( $page_url_facebook ); ?>" target="_blank"></a></li><?php
-        }
-        if ( isset( $page_url_twitter ) ) { ?>
-          <li><a class="ssp-widget-social-link-twitter" rel="external" href="<?php echo esc_url( $page_url_twitter ); ?>" target="_blank"></a></li><?php
-        }
-        if ( isset( $page_url_googleplus ) ) { ?>
-          <li><a class="ssp-widget-social-link-google-plus" rel="external" href="<?php echo esc_url( $page_url_googleplus ); ?>" target="_blank"></a></li><?php
-        }
-        if ( isset( $page_url_instagram ) ) { ?>
-          <li><a class="ssp-widget-social-link-instagram" rel="external" href="<?php echo esc_url( $page_url_instagram ); ?>" target="_blank"></a></li><?php
-        }
-        if ( isset( $page_url_youtube ) ) { ?>
-          <li><a class="ssp-widget-social-link-youtube" rel="external" href="<?php echo esc_url( $page_url_youtube ); ?>" target="_blank"></a></li><?php
-        } ?>
-        <li><a class="ssp-widget-social-link-feed" rel="alternate" href="<?php echo esc_url( get_bloginfo( 'url' ) ) . '/feed'; ?>" target="_blank"></a></li>
-      </ul>
-		</div><?php
-		
+    echo '<div class="ssp-widget-social-link">';
+    echo '<ul class="ssp-widget-social-link-list">';
+    foreach ( $options['social_network'] as $network => $url ) {
+      echo '<li><a class="ssp-widget-social-link-' . $network . '" rel="external" href="' . esc_url( $url ) .'" target="_blank"></a></li>';
+    }
+    echo '</ul>';
+    echo '</div>';
 		echo $args['after_widget'];
   }
 

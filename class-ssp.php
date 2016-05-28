@@ -4,52 +4,36 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class SSP {
 
-  public function __construct() {
+  private static $instance;
+
+  public static function get_instance() {
+    if ( is_null( self::$instance ) ) {
+      self::$instance = new SSP();
+    }
+    return self::$instance;
+  }
+
+  private function __construct() {
+    $this->init_settings();
     $this->init_modules();
     $this->init_widgets();
-    $this->init_settings();
+  }
+
+  private function init_settings() {
+    include_once( SSP_DIR . 'admin/class-settings.php' );
+    SSP_Settings::get_instance();
   }
 
   private function init_modules() {
-    
     $options = get_option( 'ssp_settings' );
-    $enabled = $options['modules_activation'];
-    
-    if ( isset( $enabled['aggregator'] ) ) {
-      include_once( SSP_DIR . 'modules/class-aggregator.php' );
-      new SSP_Aggregator();
-    }
-    if ( isset( $enabled['contact_form'] ) ) {
-      include_once( SSP_DIR . 'modules/class-contact-form.php' );
-      new SSP_Contact_Form();
-    }
-    if ( isset( $enabled['data_structurer'] ) ) {
-      include_once( SSP_DIR . 'modules/class-data-structurer.php' );
-      new SSP_Data_Structurer();
-    }
-    if ( isset( $enabled['dynamic_sidebar'] ) ) {
-      include_once( SSP_DIR . 'modules/class-dynamic-sidebar.php' );
-      new SSP_Dynamic_Sidebar();
-    }
-    if ( isset( $enabled['float_menu'] ) ) {
-      include_once( SSP_DIR . 'modules/class-float-menu.php' );
-      new SSP_Float_Menu();
-    }
-    if ( isset( $enabled['order_tracking'] ) ) {
-      include_once( SSP_DIR . 'modules/class-order-tracking.php' );
-      new SSP_Order_Tracking();
-    }
-    if ( isset( $enabled['sharer'] ) ) {
-      include_once( SSP_DIR . 'modules/class-sharer.php' );
-      new SSP_Sharer();
-    }
-    if ( isset( $enabled['slider'] ) ) {
-      include_once( SSP_DIR . 'modules/class-slider.php' );
-      new SSP_Slider();
-    }
-    if ( isset( $enabled['store_credit'] ) ) {
-      include_once( SSP_DIR . 'modules/class-store-credit.php' );
-      new SSP_Store_Credit();
+    $modules = $options['modules_activation'];
+    if ( ! isset( $modules ) || ! is_array( $modules ) ) return;
+    foreach ( $modules as $module => $activation ) {
+      if ( $activation ) {
+        include_once( SSP_DIR . 'modules/class-' . str_replace( '_', '-', $module ) . '.php' );
+        $class = 'SSP_' . ucwords( $module, '_' );
+        new $class;
+      }
     }
   }
 
@@ -66,28 +50,21 @@ class SSP {
     register_widget( 'SSP_Widget_Social_Link' );
   }
 
-  private function init_settings() {
-    include_once( SSP_DIR . 'admin/class-settings.php' );
-    new SSP_Settings();
-  }
-
   public function init_db() {
     global $wpdb;
-    $options = array(
-      'modules_activation' => array(
-        'aggregator'       => 1,
-        'contact_form'     => 1,
-        'data_structurer'  => 1,
-        'dynamic_sidebar'  => 1,
-        'float_menu'       => 1,
-        'order_tracking'   => 1,
-        'sharer'           => 1,
-        'slider'           => 1,
-        'store_credit'     => 1
-      )
-    );
-    $wpdb->query( "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}ssp_email_list (id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(255) NOT NULL, subscription DATETIME NOT NULL);" );
+    $settings = SSP_Settings::get_instance();
+    $options = array();
+    foreach ( $settings->get_settings_fields() as $field => $setting ) {
+      $section = substr( $setting['section'], 13 );
+      if ( $section === 'modules_activation' ) {
+        $options[$section][$field] = 1;
+      }
+      else {
+        $options[$section][$field] = null;
+      }
+    }
     add_option( 'ssp_settings', $options );
+    $wpdb->query( "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}ssp_email_list (id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(255) NOT NULL, subscription DATETIME NOT NULL);" );
   }
 
   public function clean_db() {
@@ -97,6 +74,6 @@ class SSP {
       $wpdb->query( "DROP TABLE {$wpdb->prefix}ssp_email_list" );
     }
     delete_option( 'ssp_settings' );
-    // Also have to delete order post meta from the "Tracking Order" module...
+    // TODO: delete order post meta from the "Tracking Order" module...
   }
 }

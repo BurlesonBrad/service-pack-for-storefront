@@ -18,24 +18,60 @@ class SSP_Order_Tracking {
 		add_action( 'woocommerce_before_my_account', array( $this, 'frontend_template' ), 20 );
   }
 
-  // Grep serialized 'order_tracking' options and return them in a nicely structured array.
-  // Pretty buggy depending on the option fields pairs found in wp_options...
-  // Need to check all this and find a solution.
-  private function init_order_tracking_options() {
+  /**
+   * Grep serialized 'order_tracking' options and return them in a nicely structured array.
+   * Pretty complicated for what it has to do... I believe there are better implementations or approches.
+   * Feel free to PR it if you have !
+   *
+   * The option we're grepping are structured this way:
+   * 
+   * 'ssp_settings' = array(
+   *   'order_tracking' => array(
+   *     'shipper_name_0' => 'Foobar Shipper',
+   *     'shipper_url_0'  => 'http://www.foobar.com/tracking-service?url=',
+   *     'shipper_name_1' => null,
+   *     'shipper_url_1'  => null,
+   *   )
+   * )
+   * NOTE: The pair of option fields are added dynamically when a new shipper is found.
+   * For more info, check SSP_Settings.
+   *
+   * We're attemting to return the options this way:
+   *
+   * 'foobar_shipper' = array(
+   *   'name'         => 'Foobar Shipper',
+   *   'url'          => 'http://www.foobar.com/tracking-service?url='
+   * )
+   */
+   private function init_order_tracking_options() {
     $options = get_option( 'ssp_settings' );
-    if ( ! isset( $options['order_tracking'] ) ) return;
-    $shippers_options =  $options['order_tracking'];
-    $shippers_tmp = array();
-    $shippers = array();
+    $shippers_options =  isset( $options['order_tracking'] ) ? $options['order_tracking'] : null;
+    $shippers_tmp = array(); // Temporary shippers array classified by their ID.
+    $shippers = array(); // Futur shippers array which will have their name (if available) as key. Else by thier ID.
     $number = 0;
+    if ( ! isset( $shippers_options ) ) return;
     foreach ( $shippers_options as $key => $value ) {
       list( , $option, $id ) = explode( '_', $key );
-      $shippers_tmp[$id][$option] = $value;
+      $shippers_tmp[$id][$option] = isset( $value ) ? $value : null;
       if ( $option === 'name' ) {
-        $new_key = str_replace( ' ', '_', strtolower( $value ) );
+        // If shipper's name has not been set, set his ID as key.
+        if ( ! isset( $value ) ) {
+          $new_key = $id;
+        }
+        // Else, his name value as key.
+        else {
+          $new_key = str_replace( ' ', '_', strtolower( $value ) );
+          // We have a shipper.
+          $any_shipper = true;
+        }
         $shippers[$new_key] = null;
       }
     }
+    // Check if we've got a shipper.
+    if ( ! isset( $any_shipper ) ) {
+      return;
+    }
+    // Change shippers keys by their new ID.
     foreach ( $shippers as $key => $value ) {
       $shippers[$key] = $shippers_tmp[$number];
       $number ++;
@@ -44,9 +80,15 @@ class SSP_Order_Tracking {
   }
 
   private function init_tracking_meta( $post_ID = null ) {
-    if ( ! isset( $post_ID ) ) {
+    if ( is_null( $post_ID ) ) {
       global $post;
       $post_ID = $post->ID;
+    }
+    $tracking_shipper = ! empty( $post_meta = get_post_meta( $post_ID, 'ssp_order_tracking_shipper', true ) ) ? $post_meta : null;
+    $tracking_number  = ! empty( $post_meta = get_post_meta( $post_ID, 'ssp_order_tracking_number', true ) ) ? $post_meta : null;
+    if ( ! array_key_exists( $tracking_shipper, $this->order_tracking_options ) ) {
+      delete_post_meta( $post_ID, 'ssp_order_tracking_shipper', $tracking_shipper );
+      delete_post_meta( $post_ID, 'ssp_order_tracking_number', $tracking_number );
     }
     $this->tracking_shipper = ! empty( $post_meta = get_post_meta( $post_ID, 'ssp_order_tracking_shipper', true ) ) ? $post_meta : null;
     $this->tracking_number  = ! empty( $post_meta = get_post_meta( $post_ID, 'ssp_order_tracking_number', true ) ) ? $post_meta : null;
@@ -65,7 +107,7 @@ class SSP_Order_Tracking {
 
   public function meta_box() {
     if ( ! isset( $this->order_tracking_options ) ) {
-      echo '<p>' . esc_html__( 'You first need to add new shippers on' ) . ' <a href="' . esc_url( admin_url( 'options-general.php?page=ssp_settings_page' ) ) . '">' . 'Storefront SP ' . esc_html( 'settings page', 'ssp' ) . '</a></p>';
+      echo '<p>' . esc_html__( 'You first need to add new shippers on' ) . ' <a href="' . esc_url( admin_url( 'options-general.php?page=ssp_settings_page' ) ) . '">' . 'Storefront SP ' . esc_html__( 'settings page', 'ssp' ) . '</a></p>';
       return;
     }
     $this->init_tracking_meta();
@@ -74,8 +116,10 @@ class SSP_Order_Tracking {
     echo '<select id="ssp_order_tracking_shipper" name="ssp_order_tracking_shipper">';
     echo '<option value="">' . esc_html__( 'Select the shipper', 'ssp' ) . '</option>';
     foreach ( $this->order_tracking_options as $key => $value ) {
-      $selected = ( $this->tracking_shipper === $key ) ? 'selected ' : '';
-      echo '<option ' . $selected . 'value="' . esc_attr( $key ) . '">' . esc_html( $value['name'] ) . '</option>';
+      if ( ! is_int( $key ) ) {
+        $selected = ( $this->tracking_shipper === $key ) ? 'selected ' : '';
+        echo '<option ' . $selected . 'value="' . esc_attr( $key ) . '">' . esc_html( $value['name'] ) . '</option>';
+      }
     }
     echo '</select></p>';
     echo '<p><label for="ssp_order_tracking_number">' . esc_html__( 'Tracking number', 'ssp' ) . '</label>';
@@ -116,8 +160,7 @@ class SSP_Order_Tracking {
 
   public function frontend_template() {
     $customer_post_orders = $this->get_customer_post_orders();
-    // To modify when 'store_credit' settings will be merged with the main ssp_settings.
-    if ( 'no' === get_option( 'woocommerce_store_credit_show_my_account', 'yes' ) || ! isset( $customer_post_orders ) ) return;
+    if ( ! isset( $customer_post_orders ) ) return;
     ob_start();
     foreach ( $customer_post_orders as $post_order ) {
       $order = new WC_Order( $post_order->ID );
