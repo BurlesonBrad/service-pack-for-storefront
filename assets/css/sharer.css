@@ -35,8 +35,12 @@
 	.ssp-sharer li {
 		border-radius: 5px;
 		display: inline-block;
+    margin-left: 10px;
 		padding: 10px;
 	}
+  .ssp-sharer li.first {
+    margin-left: 0;
+  }
 	.ssp-sharer li a:before {
 		font-weight: 600;
 		margin-right: 5px;
@@ -82,14 +86,14 @@
 	content: "\f099";
 }
 
-.ssp-sharer-googleplus-button {
+.ssp-sharer-google\00002b-button {
 	background-color: #D9432F;
 }
 
-.ssp-sharer-googleplus-button:hover {
+.ssp-sharer-google\00002b-button:hover {
 	background-color: #c33c2a;
 }
 
-.ssp-sharer-googleplus-link:before {
+.ssp-sharer-google\00002b-link:before {
 	content: "\f0d5";
 }
