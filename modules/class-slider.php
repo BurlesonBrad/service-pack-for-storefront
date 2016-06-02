@@ -91,7 +91,6 @@ class SSP_Slider {
   }
 
   public function meta_box( $post )  {
-    //echo '<input type="hidden" name="ssp_slide_link_box_nonce" value="' . wp_create_nonce( basename( __FILE__ ) ) . '" />';
     echo '<table class="form-table">';
     foreach ( $this->slide_link_box['fields'] as $field ) {
       $meta = get_post_meta( $post->ID, $field['id'], true );

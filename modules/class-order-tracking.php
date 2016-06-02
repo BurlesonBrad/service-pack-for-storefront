@@ -49,6 +49,7 @@ class SSP_Order_Tracking {
     $shippers_tmp = array(); // Temporary shippers array classified by their ID.
     $shippers = array(); // Futur shippers array which will have their name (if available) as key. Else by thier ID.
     $number = 0;
+
     if ( ! isset( $shippers_options ) ) return;
     foreach ( $shippers_options as $key => $value ) {
       list( , $option, $id ) = explode( '_', $key );
@@ -86,6 +87,7 @@ class SSP_Order_Tracking {
     }
     $tracking_shipper = ! empty( $post_meta = get_post_meta( $post_ID, 'ssp_order_tracking_shipper', true ) ) ? $post_meta : null;
     $tracking_number  = ! empty( $post_meta = get_post_meta( $post_ID, 'ssp_order_tracking_number', true ) ) ? $post_meta : null;
+
     if ( ! array_key_exists( $tracking_shipper, $this->order_tracking_options ) ) {
       delete_post_meta( $post_ID, 'ssp_order_tracking_shipper', $tracking_shipper );
       delete_post_meta( $post_ID, 'ssp_order_tracking_number', $tracking_number );
@@ -115,6 +117,7 @@ class SSP_Order_Tracking {
     echo '<p><label for="ssp_order_tracking_shipper">' . esc_html__( 'Shipper' ) . '</label /><br />';
     echo '<select id="ssp_order_tracking_shipper" name="ssp_order_tracking_shipper">';
     echo '<option value="">' . esc_html__( 'Select the shipper', 'ssp' ) . '</option>';
+    
     foreach ( $this->order_tracking_options as $key => $value ) {
       if ( ! is_int( $key ) ) {
         $selected = ( $this->tracking_shipper === $key ) ? 'selected ' : '';
@@ -124,6 +127,7 @@ class SSP_Order_Tracking {
     echo '</select></p>';
     echo '<p><label for="ssp_order_tracking_number">' . esc_html__( 'Tracking number', 'ssp' ) . '</label>';
     echo '<input type="text" id="ssp_order_tracking_number" name="ssp_order_tracking_number" value="' . esc_attr( $this->tracking_number ) . '" /></p>';
+    
     if ( isset( $this->tracking_number ) && isset( $this->tracking_shipper ) ) {
       echo '<a href="' . esc_url( $this->order_tracking_options[$this->tracking_shipper]['url'] . $this->tracking_number ) . '" rel="nofollow" target="_blank">' . esc_html__( 'Track it', 'ssp' ) . '</a>';
     }
@@ -135,6 +139,7 @@ class SSP_Order_Tracking {
     }
     $track_shipper = sanitize_text_field( $_POST['ssp_order_tracking_shipper'] );
     $track_number = sanitize_text_field( $_POST['ssp_order_tracking_number'] );
+    
     if ( preg_match( '#^[a-z0-9_]{2,20}$#i', $track_shipper ) && preg_match( '#^[a-z0-9]{5,50}$#i', $track_number ) ) {
       update_post_meta( $post_ID, 'ssp_order_tracking_shipper', $track_shipper );
       update_post_meta( $post_ID, 'ssp_order_tracking_number', $track_number );
@@ -153,25 +158,31 @@ class SSP_Order_Tracking {
 
   public function email_template() {
     $this->init_tracking_meta();
+    
     if ( ! isset( $this->tracking_shipper ) || ! isset( $this->tracking_number ) ) return;
-    echo '<h3>' . esc_html__( 'Tracking information', 'ssp' ) . '</h3>';
-    echo '<p>' . esc_html__( 'You can track anytime your order by clicking', 'ssp' ) . ' <a href="' . esc_url( $this->order_tracking_options[$this->tracking_shipper]['url'] . $this->tracking_number ) . '" target="_blank">' . esc_html__( 'here' ) . '</a>.</p>';
+    $html  = '<h3>' . esc_html__( 'Tracking information', 'ssp' ) . '</h3>';
+    $html .= '<p>' . esc_html__( 'You can track anytime your order by clicking', 'ssp' ) . ' <a href="' . esc_url( $this->order_tracking_options[$this->tracking_shipper]['url'] . $this->tracking_number ) . '" target="_blank">' . esc_html__( 'here' ) . '</a>.</p>';
+    
+    echo apply_filters( 'ssp_order_tracking_email_template', $html );
 	}	
 
   public function frontend_template() {
     $customer_post_orders = $this->get_customer_post_orders();
     if ( ! isset( $customer_post_orders ) ) return;
     ob_start();
+    
     foreach ( $customer_post_orders as $post_order ) {
       $order = new WC_Order( $post_order->ID );
 			$this->init_tracking_meta( $post_order->ID );
       if ( isset( $this->tracking_shipper ) && isset( $this->tracking_number ) ) {
-        echo '<li>';
-			  echo '<strong>' . esc_html__( 'Order N°', 'ssp' ) . ' ' . esc_html( $order->get_order_number() ) . '</strong><br />';
-			  echo esc_html__( 'Sent by', 'ssp' ) . ' ' . esc_html( $this->order_tracking_options[$this->tracking_shipper]['name'] ) . '<br />';
-        echo esc_html__( 'Tracking number', 'ssp' ) . ': '. esc_html( $this->tracking_number ) . '<br />';
-		    echo esc_html__( 'You can track anytime you order by clicking', 'ssp' ) . ' ' . '<a href="' . esc_url( $this->order_tracking_options[$this->tracking_shipper]['url'] . $this->tracking_number ) . '" rel="nofollow" target="_blank">' . esc_html__( 'here', 'ssp' ) . '</a>.';
-			  echo '</li>';
+        $loop  = '<li>';
+			  $loop .= '<strong>' . esc_html__( 'Order N°', 'ssp' ) . ' ' . esc_html( $order->get_order_number() ) . '</strong><br />';
+			  $loop .= esc_html__( 'Sent by', 'ssp' ) . ' ' . esc_html( $this->order_tracking_options[$this->tracking_shipper]['name'] ) . '<br />';
+        $loop .= esc_html__( 'Tracking number', 'ssp' ) . ': '. esc_html( $this->tracking_number ) . '<br />';
+		    $loop .= esc_html__( 'You can track anytime you order by clicking', 'ssp' ) . ' ' . '<a href="' . esc_url( $this->order_tracking_options[$this->tracking_shipper]['url'] . $this->tracking_number ) . '" rel="nofollow" target="_blank">' . esc_html__( 'here', 'ssp' ) . '</a>.';
+        $loop .= '</li>';
+
+        echo apply_filters( 'ssp_order_tracking_frontend_loop', $loop );
 		  }
     }
     $orders = ob_get_clean();

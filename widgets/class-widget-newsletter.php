@@ -20,7 +20,7 @@ class SSP_Widget_Newsletter extends WP_Widget {
 	public function widget( $args, $instance ) {
     echo $args['before_widget'];
 		echo $args['before_title'];
-		echo apply_filters( 'widget_title', $instance['title'] );
+		echo $instance['title'];
 		echo $args['after_title']; ?>
 		
     <form class="ssp-widget-newsletter">
@@ -37,18 +37,22 @@ class SSP_Widget_Newsletter extends WP_Widget {
     check_ajax_referer( 'ssp_widget_newsletter_nonce', 'security' );
     
     $errors = new WP_Error;
+
     // Response Messages
     $response_message = array(
-		  'too_long_email'    => 'The maximum length of you email address is 50 characters.',
-		  'invalid_email'     => 'Invalid email address.',
-		  'missing_email'     => 'Don\'t forget your email address...',
-		  'already_subcribed' => 'You are already subcribed to our newsletter...',
-		  'insertion_failure' => 'Sorry but you can not subscribe to our newsletter because something not predicted happened, please try again.',
-		  'success'           => 'Thank you for subscribing to our newsletter !'
+		  'too_long_email'    => __( 'The maximum length of you email address is 50 characters.', 'ssp' ),
+		  'invalid_email'     => __( 'Invalid email address.', 'ssp' ),
+		  'missing_email'     => __( 'Don\'t forget your email address...', 'ssp' ),
+		  'already_subcribed' => __( 'You are already subcribed to our newsletter...', 'ssp' ),
+		  'insertion_failure' => __( 'Sorry but you can not subscribe to our newsletter because something not predicted happened, please try again.', 'ssp' ),
+		  'success'           => __( 'Thank you for subscribing to our newsletter !', 'ssp' )
     );
+    apply_filters( 'ssp_newsletter_response_message', $response_message );
+
     if ( isset( $_POST['ssp_widget_newsletter_email'] ) && ! empty( $_POST['ssp_widget_newsletter_email'] ) ) {
 			$email = $_POST['ssp_widget_newsletter_email'];
-			// Validation & Sanitazation
+    
+      // Validation & Sanitazation
       if ( strlen( $email ) <= 50 ) {
       	if ( preg_match( '#^[a-z0-9_.-]+@[a-z0-9_.-]{2,}\.[a-z]{2,4}$#', $email ) ) {
           $valid_email = sanitize_email( $email );
@@ -56,30 +60,28 @@ class SSP_Widget_Newsletter extends WP_Widget {
 					$row = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}ssp_email_list WHERE email = '$valid_email'" );
           if ( is_null( $row ) ) {
             if ( ! $insertion_success = $wpdb->insert( "{$wpdb->prefix}ssp_email_list", array( 'email' => $valid_email, 'subscription' => current_time( 'mysql' ) ) ) ) {
-					    $errors->add( 'insertion_failure', __( $response_message['insertion_failure'], 'ssp' ) );
+					    $errors->add( 'insertion_failure', $response_message['insertion_failure'] );
 						}
+					} else {
+						$errors->add( 'already_subscribed', $response_message['already_subcribed'] );
 					}
-					else {
-						$errors->add( 'already_subscribed', __( $response_message['already_subcribed'], 'ssp' ) );
-					}
+				} else {
+					$errors->add( 'invalid_email', $response_message['invalid_email'] );
 				}
-				else {
-					$errors->add( 'invalid_email', __( $response_message['invalid_email'], 'ssp' ) );
-				}
+			} else {
+				$errors->add( 'too_long_email', $response_message['too_long_email'] );
 			}
-			else {
-				$errors->add( 'too_long_email', __( $response_message['too_long_email'], 'ssp' ) );
-			}
-		}
-		else {
-			$errors->add( 'missing_email', __( $response_message['missing_email'], 'ssp' ) );
-		}
+		} else {
+			$errors->add( 'missing_email', $response_message['missing_email'] );
+    }
+
     // AJAX Response
 		$error_detected = $errors->get_error_code();
     if ( empty( $error_detected ) ) {
-      wp_send_json_success( esc_html__( $response_message['success'], 'ssp' ) );
+      wp_send_json_success( $response_message['success'] );
 		}
 		else if ( ! empty( $error_detected ) ) {
+      $error = null;
       foreach ( $errors->get_error_messages() as $error_message ) {
         $error .= $error_message . ' ';
 			}
