@@ -17,17 +17,18 @@ class SSP_Widget_Social_Link extends WP_Widget {
 	
 	public function widget( $args, $instance ) {
     $options = get_option( 'ssp_settings' );
-    if ( empty( $options['social_network'] ) ) return;
 
     echo $args['before_widget'];
 		echo $args['before_title'];
-		echo apply_filters( 'widget_title', $instance['title'] );
+		echo $instance['title'];
 		echo $args['after_title'];
 		
     echo '<div class="ssp-widget-social-link">';
     echo '<ul class="ssp-widget-social-link-list">';
     foreach ( $options['social_network'] as $network => $url ) {
-      echo '<li><a class="ssp-widget-social-link-' . $network . '" rel="external" href="' . esc_url( $url ) .'" target="_blank"></a></li>';
+      if ( ! is_null( $url ) ) {
+        echo '<li><a class="ssp-widget-social-link-' . $network . '" rel="external" href="' . esc_url( $url ) .'" target="_blank"></a></li>';
+      }
     }
     echo '</ul>';
     echo '</div>';
