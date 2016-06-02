@@ -15,7 +15,7 @@ class SSP_Settings {
       'name'         => 'Contact Form',
       'type'         => 'checkbox',
       'section'      => 'ssp_settings_modules_activation',
-      'description'  => 'Simple front end contact form. Once activated, add the shortcode on your contact page: [ssp_contact_form]'
+      'description'  => 'Simple front end contact form. Once activated, add its shortcode on your "contact" page: [ssp_contact_form]'
     ),
     'data_structurer'=> array(
       'name'         => 'Data Structurer',
