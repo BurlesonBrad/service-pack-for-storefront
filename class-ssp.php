@@ -20,8 +20,10 @@ class SSP {
   }
 
   private function init_settings() {
-    include_once( SSP_DIR . 'admin/class-settings.php' );
-    SSP_Settings::get_instance();
+    if ( is_admin() ) {
+      include_once( SSP_DIR . 'admin/class-settings.php' );
+      SSP_Settings::get_instance();
+    }
   }
 
   private function init_modules() {
