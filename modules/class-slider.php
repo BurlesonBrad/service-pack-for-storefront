@@ -33,9 +33,9 @@ class SSP_Slider {
 
   public function enqueue_scripts() {
     if ( ! is_front_page() ) return;
-    wp_register_style( 'ssp-slider-style', SSP_URL . 'assets/css/slider.css' );
-    wp_register_script( 'ssp-slider-init-script', SSP_URL . 'assets/js/slider-init.js', array( 'jquery' ) );
-	  wp_register_script( 'ssp-slider-script', SSP_URL . 'assets/js/slider.js', array( 'jquery' ), false, true );
+    wp_register_style( 'ssp-slider-style', SSP_URL . 'assets/css/slider.min.css' );
+    wp_register_script( 'ssp-slider-init-script', SSP_URL . 'assets/js/slider-init.min.js', array( 'jquery' ) );
+	  wp_register_script( 'ssp-slider-script', SSP_URL . 'assets/js/slider.min.js', array( 'jquery' ), false, true );
     wp_enqueue_style( 'ssp-slider-style' );
 		wp_enqueue_script( 'ssp-slider-init-script' );
 		wp_enqueue_script( 'ssp-slider-script' );

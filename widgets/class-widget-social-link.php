@@ -36,7 +36,7 @@ class SSP_Widget_Social_Link extends WP_Widget {
   }
 
   public function enqueue_scripts() {
-    wp_register_style( 'ssp-widget-social-link-style', SSP_URL . 'assets/css/widget-social-link.css' );
+    wp_register_style( 'ssp-widget-social-link-style', SSP_URL . 'assets/css/widget-social-link.min.css' );
     wp_enqueue_style( 'ssp-widget-social-link-style' );
   }
 }

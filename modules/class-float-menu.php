@@ -9,9 +9,9 @@ class SSP_Float_Menu {
   }
   
   public function enqueue_scripts() {
-    wp_register_script( 'ssp-float-menu-script', SSP_URL . 'assets/js/float-menu.js', array( 'jquery' ) );
+    wp_register_script( 'ssp-float-menu-script', SSP_URL . 'assets/js/float-menu.min.js', array( 'jquery' ) );
     wp_enqueue_script( 'ssp-float-menu-script' );
-    wp_register_style( 'ssp-float-menu-style', SSP_URL . 'assets/css/float-menu.css' );
+    wp_register_style( 'ssp-float-menu-style', SSP_URL . 'assets/css/float-menu.min.css' );
     wp_enqueue_style( 'ssp-float-menu-style' );
   }
 }

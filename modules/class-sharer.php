@@ -12,7 +12,7 @@ class SSP_Sharer {
 
   public function enqueue_scripts() {
     if ( is_single() || is_product() ) {
-      wp_register_style( 'ssp-sharer-style', SSP_URL . 'assets/css/sharer.css' );
+      wp_register_style( 'ssp-sharer-style', SSP_URL . 'assets/css/sharer.min.css' );
 		  wp_enqueue_style( 'ssp-sharer-style' );
 	  }
   }

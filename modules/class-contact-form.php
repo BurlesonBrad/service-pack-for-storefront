@@ -29,8 +29,8 @@ class SSP_Contact_Form {
 
   public function enqueue_scripts() {
     if ( $this->page_has_shortcode ) {
-      wp_register_style( 'ssp-contact-form-style', SSP_URL . 'assets/css/contact-form.css' );
-	    wp_register_script( 'ssp-contact-form-script', SSP_URL . 'assets/js/contact-form.js', array( 'jquery' ) );
+      wp_register_style( 'ssp-contact-form-style', SSP_URL . 'assets/css/contact-form.min.css' );
+	    wp_register_script( 'ssp-contact-form-script', SSP_URL . 'assets/js/contact-form.min.js', array( 'jquery' ) );
 	    wp_enqueue_style( 'ssp-contact-form-style' );
 		  wp_enqueue_script( 'ssp-contact-form-script' );
       wp_localize_script( 'ssp-contact-form-script', 'ssp_contact_form_ajax', array( 'url' => admin_url( 'admin-ajax.php' ) ) );

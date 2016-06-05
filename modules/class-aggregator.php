@@ -12,7 +12,7 @@ class SSP_Aggregator {
 	}
 	
 	public function enqueue_scripts() {
-	  wp_register_style( 'ssp-aggregator-style', SSP_URL . 'assets/css/aggregator.css' );
+	  wp_register_style( 'ssp-aggregator-style', SSP_URL . 'assets/css/aggregator.min.css' );
 		wp_enqueue_style( 'ssp-aggregator-style' );
   }
 

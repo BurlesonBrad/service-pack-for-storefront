@@ -91,8 +91,8 @@ class SSP_Widget_Newsletter extends WP_Widget {
 	}
 
   public function enqueue_scripts() {
-    wp_enqueue_style( 'ssp-widget-newsletter-style', SSP_URL . 'assets/css/widget-newsletter.css' );
-		wp_enqueue_script( 'ssp-widget-newsletter-script', SSP_URL . 'assets/js/widget-newsletter.js', array( 'jquery' ) );
+    wp_enqueue_style( 'ssp-widget-newsletter-style', SSP_URL . 'assets/css/widget-newsletter.min.css' );
+		wp_enqueue_script( 'ssp-widget-newsletter-script', SSP_URL . 'assets/js/widget-newsletter.min.js', array( 'jquery' ) );
 		wp_localize_script( 'ssp-widget-newsletter-script', 'ssp_widget_newsletter_ajax', array( 'url' => admin_url( 'admin-ajax.php' ) ) );
   }
 }
