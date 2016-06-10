@@ -2,7 +2,7 @@ jQuery( document ).ready( function( $ ) {
 	
 	var windowWidth = parseFloat( window.innerWidth );
   
-  $( 'body' ).addClass( 'ssp-floatable-menu' );
+  $( 'body' ).addClass( 'spfs-floatable-menu' );
 
   if ( windowWidth >= 768 ) {
     
@@ -19,16 +19,16 @@ jQuery( document ).ready( function( $ ) {
 		
 		  if ( ! scrolled ) {
 			  if ( $( window ).scrollTop() > position ) {
-          $( '.storefront-primary-navigation' ).addClass( 'ssp-float-menu' );
-          $( '.ssp-float-menu' ).css( { 'padding-left': menuPadding, 'padding-right': menuPadding, 'background-color': menuColor } );
+          $( '.storefront-primary-navigation' ).addClass( 'spfs-float-menu' );
+          $( '.spfs-float-menu' ).css( { 'padding-left': menuPadding, 'padding-right': menuPadding, 'background-color': menuColor } );
           $( '.site-header' ).css( 'margin-bottom', headerMarginNew );
 				  scrolled = true;
 			  }
 		  }
 		  if ( $( window ).scrollTop() <= position ) {
-        $( '.ssp-float-menu' ).css( { 'padding-left': '', 'padding-right': '', 'background-color': '' } );
+        $( '.spfs-float-menu' ).css( { 'padding-left': '', 'padding-right': '', 'background-color': '' } );
         $( '.site-header' ).css( 'margin-bottom', '' );
-			  $( '.storefront-primary-navigation' ).removeClass( 'ssp-float-menu' ); 
+			  $( '.storefront-primary-navigation' ).removeClass( 'spfs-float-menu' ); 
 			  scrolled = false;
 		  }
 	  } );

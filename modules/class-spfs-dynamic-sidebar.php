@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class SSP_Dynamic_Sidebar {
+class SPFS_Dynamic_Sidebar {
 
   public function __construct() {
     add_action( 'init', array( $this, 'storefront_remove_sidebar' ) );
@@ -31,7 +31,7 @@ class SSP_Dynamic_Sidebar {
     } elseif ( is_cart() || is_checkout() || is_account_page() ) {
         $sidebar = 'sidebar-special';
     }
-    apply_filters( 'ssp_dynamic_sidebar_template', $sidebar );
+    apply_filters( 'spfs_dynamic_sidebar_template', $sidebar );
 
     if ( ! is_active_sidebar( $sidebar ) ) return;
     
@@ -41,7 +41,7 @@ class SSP_Dynamic_Sidebar {
   }
   
   public function top_footer_template() {
-    $rows = apply_filters( 'ssp_dynamic_sidebar_top_footer_template_rows', 2 );
+    $rows = apply_filters( 'spfs_dynamic_sidebar_top_footer_template_rows', 2 );
     $r = 0;
     
     while ( $r < $rows ) {
@@ -53,7 +53,7 @@ class SSP_Dynamic_Sidebar {
 		  } else {
 			    $columns = 0;
       }
-      apply_filters( 'ssp_dynamic_sidebar_top_footer_template_columns', $columns );
+      apply_filters( 'spfs_dynamic_sidebar_top_footer_template_columns', $columns );
 
       if ( $columns > 0 ) {
         echo '<div class="footer-widgets col-' . intval( $columns ) . ' top-footer row-' . intval( $r ) . ' fix">';
@@ -75,88 +75,88 @@ class SSP_Dynamic_Sidebar {
   public function register_sidebars() {
     $sidebars = array(
       array(
-		    'name'					=> __( 'Blog Sidebar', 'ssp' ),
+		    'name'					=> __( 'Blog Sidebar', 'service-pack-for-storefront' ),
 		    'id'						=> 'sidebar-blog',
-		    'description' 	=> __( 'Sidebar displaying on your blog.', 'ssp' ),
+		    'description' 	=> __( 'Sidebar displaying on your blog.', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p class="widget-title">',
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Product Category Sidebar', 'ssp' ),
+		    'name'					=> __( 'Product Category Sidebar', 'service-pack-for-storefront' ),
 		    'id'						=> 'sidebar-product-category',
-		    'description' 	=> __( 'Sidebar displaying on product categories.', 'ssp' ),
+		    'description' 	=> __( 'Sidebar displaying on product categories.', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p class="widget-title">',
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Product Sidebar', 'ssp' ),
+		    'name'					=> __( 'Product Sidebar', 'service-pack-for-storefront' ),
 		    'id'						=> 'sidebar-product',
-		    'description' 	=> __( 'Sidebar displaying on product page.', 'ssp' ),
+		    'description' 	=> __( 'Sidebar displaying on product page.', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p class="widget-title">',
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Page Sidebar', 'ssp' ),
+		    'name'					=> __( 'Page Sidebar', 'service-pack-for-storefront' ),
 		    'id'						=> 'sidebar-page',
-		    'description' 	=> __( 'Sidebar displaying on single pages.', 'ssp' ),
+		    'description' 	=> __( 'Sidebar displaying on single pages.', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p class="widget-title">',
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Special Sidebar', 'ssp' ),
+		    'name'					=> __( 'Special Sidebar', 'service-pack-for-storefront' ),
 		    'id'						=> 'sidebar-special',
-		    'description' 	=> __( 'Sidebar displaying on my account, checkout, and cart pages.', 'ssp' ),
+		    'description' 	=> __( 'Sidebar displaying on my account, checkout, and cart pages.', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p class="widget-title">',
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Top Footer 1', 'ssp' ),
+		    'name'					=> __( 'Top Footer 1', 'service-pack-for-storefront' ),
 		    'id'  					=> 'top-footer-1-1',
-		    'description' 	=> __( 'Top footer row-1 column-1', 'ssp' ),
+		    'description' 	=> __( 'Top footer row-1 column-1', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p class="widget-title">',
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Top Footer 2', 'ssp' ),
+		    'name'					=> __( 'Top Footer 2', 'service-pack-for-storefront' ),
 		    'id'  					=> 'top-footer-1-2',
-		    'description' 	=> __( 'Top footer row-1 column-2', 'ssp' ),
+		    'description' 	=> __( 'Top footer row-1 column-2', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p>',
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Top Footer 3', 'ssp' ),
+		    'name'					=> __( 'Top Footer 3', 'service-pack-for-storefront' ),
 		    'id'  					=> 'top-footer-2-1',
-		    'description' 	=> __( 'Top footer row-2 column-1', 'ssp' ),
+		    'description' 	=> __( 'Top footer row-2 column-1', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p>',
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Top Footer 4', 'ssp' ),
+		    'name'					=> __( 'Top Footer 4', 'service-pack-for-storefront' ),
 		    'id'  					=> 'top-footer-2-2',
-		    'description' 	=> __( 'Top footer row-2 column-2', 'ssp' ),
+		    'description' 	=> __( 'Top footer row-2 column-2', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p>',
 		    'after_title' 	=> '</p>'
 	    )
     );
-    apply_filters( 'ssp_dynamic_sidebar_register', $sidebars );
+    apply_filters( 'spfs_dynamic_sidebar_register', $sidebars );
     
     if ( ! is_array( $sidebars ) ) return;
      

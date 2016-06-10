@@ -1,6 +1,8 @@
-# storefront-sp
+# service-pack-for-storefront
 
-Storefront Service Pack Beta adds modulable fundamental functionnalities and SEO enhancements to your WooCommerce/Storefront site.
+Note: This plugin or its author are in no way affiliated with WooThemes.
+
+Service Pack for Storefront (Beta) adds modulable fundamental functionnalities and SEO enhancements to your WooCommerce/Storefront site.
 
 Includes all basic functionalities a e-commerce should have:
 
@@ -13,7 +15,6 @@ Includes all basic functionalities a e-commerce should have:
 - Product and Post Sharer
 - Floating Menu
 - Dynamic Sidebar
-- Json LD Data Structurer
 
 Plus few extra widgets and little functionalities...
 

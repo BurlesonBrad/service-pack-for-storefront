@@ -2,10 +2,10 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class SSP_Widget_Facebook_Page extends WP_Widget {
+class SPFS_Widget_Facebook_Page extends WP_Widget {
 
   public function __construct() {
-    parent::__construct( 'ssp_widget_facebook_page', 'Facebook Page', array( 'description' => 'Storefront SP Facebook Page Widget' ) );
+    parent::__construct( 'spfs_widget_facebook_page', 'Facebook Page', array( 'description' => 'Facebook Page Widget' ) );
   }
 	
 	public function form( $instance ) {
@@ -15,7 +15,7 @@ class SSP_Widget_Facebook_Page extends WP_Widget {
 	}
 	
   public function widget( $args, $instance ) {
-    $options  = get_option( 'ssp_settings' );
+    $options  = get_option( 'spfs_settings' );
     $page_url = isset( $options['social_network']['facebook'] ) ? $options['social_network']['facebook'] : 'https://www.facebook.com/facebook';
     
     echo $args['before_widget'];

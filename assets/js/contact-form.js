@@ -1,10 +1,10 @@
 jQuery( document ).ready( function( $ ) {
 	
-	if ( $( '#ssp-contact-form-send' ).length > 0 ) {
+	if ( $( '#spfs-contact-form-send' ).length > 0 ) {
 		
 		var busy  = null;
 		
-		$( '#ssp-contact-form-send' ).click( function() {
+		$( '#spfs-contact-form-send' ).click( function() {
 			
 			var form  = $( this ).closest( 'form' ),
 					error = null,
@@ -12,22 +12,22 @@ jQuery( document ).ready( function( $ ) {
 					
 			if ( busy ) busy.abort();
 			busy = $.ajax( {
-				url: ssp_contact_form_ajax.url,
+				url: spfs_contact_form_ajax.url,
 				type: 'POST',
 				data: form.serialize(),
 				success: function( response ) {
 					
-					$( 'body' ).append( '<div id="ssp-contact-form-noty"></div>' );
+					$( 'body' ).append( '<div id="spfs-contact-form-noty"></div>' );
 					
 					if ( response.success === true ) {
-						$( '#ssp-contact-form-noty' ).attr( 'class', 'ssp-contact-form-noty-success' ).html( response.data );
+						$( '#spfs-contact-form-noty' ).attr( 'class', 'spfs-contact-form-noty-success' ).html( response.data );
 						form.find( '[required]' ).each( function() {
 							$( this ).removeAttr( 'style' );
 						} );
 						form[0].reset();
 					}
 					else {
-						$( '#ssp-contact-form-noty' ).attr( 'class', 'ssp-contact-form-noty-error' ).html( response.data );
+						$( '#spfs-contact-form-noty' ).attr( 'class', 'spfs-contact-form-noty-error' ).html( response.data );
 						form.find( '[required]' ).each( function() {
 						
 							if( $.trim( $( this ).val() ) === '' ) {
@@ -38,8 +38,8 @@ jQuery( document ).ready( function( $ ) {
 							}
 						} );
 					}
-					$( '#ssp-contact-form-noty' ).slideDown();
-					$( '#ssp-contact-form-noty' ).delay( 10000 ).slideUp();
+					$( '#spfs-contact-form-noty' ).slideDown();
+					$( '#spfs-contact-form-noty' ).delay( 10000 ).slideUp();
 				}
 			} );
 			

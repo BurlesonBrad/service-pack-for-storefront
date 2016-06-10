@@ -2,20 +2,20 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class SSP_Slider {
+class SPFS_Slider {
 
   private $slide_link_box = array( 
-	  'id'              => 'ssp_slide_link',
+	  'id'              => 'spfs_slide_link',
 	  'title'           => 'Slide Link',
-	  'page'            => array( 'ssp_slide' ),
+	  'page'            => array( 'spfs_slide' ),
 	  'context'         => 'normal',
 	  'priority'        => 'default',
 	  'fields'          => array(
 		  array(
 			  'name'        => 'Slide URL',
 			  'desc'        => '',
-			  'id'          => 'ssp_slide_url',
-			  'class'       => 'ssp_slide_url',
+			  'id'          => 'spfs_slide_url',
+			  'class'       => 'spfs_slide_url',
 			  'type'        => 'text',
 			  'rich_editor' => 0,            
 			  'max'         => 0             
@@ -27,40 +27,40 @@ class SSP_Slider {
     add_action( 'init', array( $this, 'register_slide_post_type' ) );
     add_action( 'woocommerce_before_main_content', array( $this, 'template' ), 30 );  
     add_action( 'save_post', array( $this, 'save' ) );
-    add_action( 'add_meta_boxes_ssp_slide', array( $this, 'add_meta_boxes' ) );
+    add_action( 'add_meta_boxes_spfs_slide', array( $this, 'add_meta_boxes' ) );
     add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
   }
 
   public function enqueue_scripts() {
     if ( ! is_front_page() ) return;
-    wp_register_style( 'ssp-slider-style', SSP_URL . 'assets/css/slider.min.css' );
-    wp_register_script( 'ssp-slider-init-script', SSP_URL . 'assets/js/slider-init.min.js', array( 'jquery' ) );
-	  wp_register_script( 'ssp-slider-script', SSP_URL . 'assets/js/slider.min.js', array( 'jquery' ), false, true );
-    wp_enqueue_style( 'ssp-slider-style' );
-		wp_enqueue_script( 'ssp-slider-init-script' );
-		wp_enqueue_script( 'ssp-slider-script' );
+    wp_register_style( 'spfs-slider-style', SPFS_URL . 'assets/css/slider.min.css' );
+    wp_register_script( 'spfs-slider-init-script', SPFS_URL . 'assets/js/slider-init.min.js', array( 'jquery' ) );
+	  wp_register_script( 'spfs-slider-script', SPFS_URL . 'assets/js/slider.min.js', array( 'jquery' ), false, true );
+    wp_enqueue_style( 'spfs-slider-style' );
+		wp_enqueue_script( 'spfs-slider-init-script' );
+		wp_enqueue_script( 'spfs-slider-script' );
   }
   
   public function register_slide_post_type() {
     $labels = array(
-		  'name'              => _x( 'Slides', 'post type general name', 'ssp' ),
-		  'singular_name'     => _x( 'Slide', 'post type singular name', 'ssp' ),
-		  'add_new'           => __( 'Add New Slide', 'ssp' ),
-	  	'add_new_item'      => __( 'Add New Slide', 'ssp' ),
-		  'edit_item'         => __( 'Edit Slide', 'ssp' ),
-		  'new_item'          => __( 'New Slide', 'ssp' ),
-		  'view_item'         => __( 'View Slide', 'ssp' ),
-		  'search_items'      => __( 'Search Slides', 'ssp' ),
-		  'not_found'         => __( 'Slide', 'ssp' ),
-		  'not_found_in_trash'=> __( 'Slide', 'ssp' ),
-		  'parent_item_colon' => __( 'Slide', 'ssp' ),
-		  'menu_name'         => __( 'Slides', 'ssp' )
+		  'name'              => _x( 'Slides', 'post type general name', 'service-pack-for-storefront' ),
+		  'singular_name'     => _x( 'Slide', 'post type singular name', 'service-pack-for-storefront' ),
+		  'add_new'           => __( 'Add New Slide', 'service-pack-for-storefront' ),
+	  	'add_new_item'      => __( 'Add New Slide', 'service-pack-for-storefront' ),
+		  'edit_item'         => __( 'Edit Slide', 'service-pack-for-storefront' ),
+		  'new_item'          => __( 'New Slide', 'service-pack-for-storefront' ),
+		  'view_item'         => __( 'View Slide', 'service-pack-for-storefront' ),
+		  'search_items'      => __( 'Search Slides', 'service-pack-for-storefront' ),
+		  'not_found'         => __( 'Slide', 'service-pack-for-storefront' ),
+		  'not_found_in_trash'=> __( 'Slide', 'service-pack-for-storefront' ),
+		  'parent_item_colon' => __( 'Slide', 'service-pack-for-storefront' ),
+		  'menu_name'         => __( 'Slides', 'service-pack-for-storefront' )
 	  );
     $taxonomies = array();
     $supports = array( 'title', 'thumbnail' );
     $post_type_args = array(
 		  'labels'            => $labels,
-		  'singular_label'    => __( 'Slide', 'ssp' ),
+		  'singular_label'    => __( 'Slide', 'service-pack-for-storefront' ),
 		  'public'            => true,
 		  'show_ui'           => true,
 		  'publicly_queryable'=> true,
@@ -68,13 +68,13 @@ class SSP_Slider {
 		  'capability_type'   => 'post',
 		  'has_archive'       => false,
 		  'hierarchical'      => false,
-		  'rewrite'           => array( 'slug' => 'ssp_slide', 'with_front' => false ),
+		  'rewrite'           => array( 'slug' => 'spfs_slide', 'with_front' => false ),
 		  'supports'          => $supports,
 		  'menu_position'     => 27,
 		  'menu_icon'         => 'dashicons-images-alt',
 		  'taxonomies'        => $taxonomies
 	  );
-    register_post_type( 'ssp_slide', $post_type_args );
+    register_post_type( 'spfs_slide', $post_type_args );
   }
 
   public function add_meta_boxes() {
@@ -104,11 +104,11 @@ class SSP_Slider {
       echo '</tr>';
 	  }
     echo '</table>';
-    wp_nonce_field( 'ssp_slide_link_box_name', 'security' );
+    wp_nonce_field( 'spfs_slide_link_box_name', 'security' );
   }
 
   public function save( $post_id ) {
-		if ( isset( $_POST['ssp_slide_link_box_nonce'] ) && ! wp_verify_nonce( $_POST['ssp_slide_link_box_nonce'], 'security' ) ) {
+		if ( isset( $_POST['spfs_slide_link_box_nonce'] ) && ! wp_verify_nonce( $_POST['spfs_slide_link_box_nonce'], 'security' ) ) {
 		  return $post_id;
 	  }
     if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -146,7 +146,7 @@ class SSP_Slider {
   public function template() {
     if ( ! is_front_page() ) return;
     $args = array(
-		  'post_type'      => 'ssp_slide',
+		  'post_type'      => 'spfs_slide',
 		  'posts_per_page' => 5
 	  );  
     $query = new WP_Query( $args );
@@ -156,11 +156,11 @@ class SSP_Slider {
       while ( $query->have_posts() ) {
         $query->the_post();
         echo '<li>';
-        if ( get_post_meta( get_the_id(), 'ssp_slide_url', true) != '' ) {
-          echo '<a href="' . esc_url( get_post_meta( get_the_id(), 'ssp_slide_url', true ) ) . '">';
+        if ( get_post_meta( get_the_id(), 'spfs_slide_url', true) != '' ) {
+          echo '<a href="' . esc_url( get_post_meta( get_the_id(), 'spfs_slide_url', true ) ) . '">';
 			  }
         echo the_post_thumbnail();
-        if ( get_post_meta( get_the_id(), 'ssp_slide_url', true ) != '' ) {
+        if ( get_post_meta( get_the_id(), 'spfs_slide_url', true ) != '' ) {
           echo '</a>';
         }
         echo '</li>';

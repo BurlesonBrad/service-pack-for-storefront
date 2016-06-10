@@ -3,7 +3,7 @@ jQuery( document ).ready( function( $ ) {
   // Get the window width for determining on which device we are.
   var windowWidth = window.innerWidth;
   // Check if the SSP Float Menu is enabled.
-  var isFloatableMenu = $( 'body' ).hasClass( 'ssp-floatable-menu' );
+  var isFloatableMenu = $( 'body' ).hasClass( 'spfs-floatable-menu' );
   // Default wedge with or without the SSP floating menu.
   var wedge = 15;
   // Scrolling animation speed.

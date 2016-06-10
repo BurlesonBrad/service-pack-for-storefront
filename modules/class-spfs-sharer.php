@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class SSP_Sharer {
+class SPFS_Sharer {
 
   public function __construct() {
     add_action( 'storefront_single_post', array( $this, 'template' ), 50 );
@@ -12,8 +12,8 @@ class SSP_Sharer {
 
   public function enqueue_scripts() {
     if ( is_single() || is_product() ) {
-      wp_register_style( 'ssp-sharer-style', SSP_URL . 'assets/css/sharer.min.css' );
-		  wp_enqueue_style( 'ssp-sharer-style' );
+      wp_register_style( 'spfs-sharer-style', SPFS_URL . 'assets/css/sharer.min.css' );
+		  wp_enqueue_style( 'spfs-sharer-style' );
 	  }
   }
 
@@ -33,10 +33,10 @@ class SSP_Sharer {
         'url'  => 'https://plus.google.com/share?url='
       )
     );
-    apply_filters( 'ssp_sharer_list', $sharers );
+    apply_filters( 'spfs_sharer_list', $sharers );
     if ( ! is_array( $sharers ) || ! isset( $sharers ) ) return;
     
-    echo '<ul class="ssp-sharer">';
+    echo '<ul class="spfs-sharer">';
 
     $sharers_number = count( $sharers );
     $sharers_count = 0;
@@ -44,8 +44,8 @@ class SSP_Sharer {
       $sharers_count ++;
       $first = $sharers_count === 1 ? ' first' : '';
 
-      echo '<li class="ssp-sharer-' . esc_attr( $sharer['slug'] ) . '-button' . $first . '">';
-      echo '<a class="ssp-sharer-' . esc_attr( $sharer['slug'] ) . '-link" rel="nofollow" href="' . esc_url( $sharer['url'] ) . get_the_permalink() . '" title="' . esc_attr__( 'Share on', 'ssp' ) . ' ' . esc_attr( ucfirst( $sharer['slug'] ) ) . '..." target="_blank"><span>' . esc_html( ucfirst( $sharer['slug'] ) ) . '</span></a>';
+      echo '<li class="spfs-sharer-' . esc_attr( $sharer['slug'] ) . '-button' . $first . '">';
+      echo '<a class="spfs-sharer-' . esc_attr( $sharer['slug'] ) . '-link" rel="nofollow" href="' . esc_url( $sharer['url'] ) . get_the_permalink() . '" title="' . esc_attr__( 'Share on', 'service-pack-for-storefront' ) . ' ' . esc_attr( ucfirst( $sharer['slug'] ) ) . '..." target="_blank"><span>' . esc_html( ucfirst( $sharer['slug'] ) ) . '</span></a>';
       echo '</li>';
     }
     echo '</ul>';

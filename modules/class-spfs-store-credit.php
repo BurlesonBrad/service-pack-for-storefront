@@ -2,7 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class SSP_Store_Credit {
+class SPFS_Store_Credit {
 
   private $store_credit_options = null;
 
@@ -10,7 +10,7 @@ class SSP_Store_Credit {
     $this->init_store_credit_options();
     add_filter( 'woocommerce_coupon_discount_types', array( $this, 'init_discount_type' ) );
     add_action( 'admin_menu', array( $this, 'init_submenu_page_store_credit_send' ), 10 );
-    add_action( 'load-woocommerce_page_ssp_store_credit_send', array( $this, 'handler_store_credit_send' ) );
+    add_action( 'load-woocommerce_page_spfs_store_credit_send', array( $this, 'handler_store_credit_send' ) );
     add_action( 'admin_notices', array( $this, 'admin_notice_store_credit_send' ) );
     add_filter( 'woocommerce_coupon_is_valid', array( $this, 'coupon_is_valid' ), 10, 2 );
 		add_action( 'woocommerce_before_my_account', array( $this, 'store_credit_my_account_template' ), 20 );
@@ -21,23 +21,23 @@ class SSP_Store_Credit {
   }
 
   private function init_store_credit_options() {
-    $options = get_option( 'ssp_settings' );
+    $options = get_option( 'spfs_settings' );
     if ( ! isset( $options['store_credit'] ) ) return;
     $this->store_credit_options = $options['store_credit'];
   }
 
   public function init_discount_type( $discount_types ) {
-    $discount_types['ssp_store_credit'] = __( 'Store Credit', 'ssp' );
+    $discount_types['spfs_store_credit'] = __( 'Store Credit', 'service-pack-for-storefront' );
 		return $discount_types;
   }
 
   public function init_submenu_page_store_credit_send() {
     add_submenu_page(
       'woocommerce',
-      __( 'Send Credits', 'ssp' ),
-      __( 'Send Credits', 'ssp' ) ,
+      __( 'Send Credits', 'service-pack-for-storefront' ),
+      __( 'Send Credits', 'service-pack-for-storefront' ),
       'manage_woocommerce',
-      'ssp_store_credit_send',
+      'spfs_store_credit_send',
       array( $this, 'submenu_page_store_credit_send_template' )
     );
 	}
@@ -45,40 +45,40 @@ class SSP_Store_Credit {
   public function submenu_page_store_credit_send_template() {
     echo '<div class="wrap">';
 		echo '<div id="icon-woocommerce" class="icon32 icon32-posts-shop_coupon"><br></div>';
-		echo '<h2>' . esc_html__( 'Send Credits', 'ssp' ) . '</h2>';
+		echo '<h2>' . esc_html__( 'Send Credits', 'service-pack-for-storefront' ) . '</h2>';
 		echo '<form method="post">';
 		echo '<table class="form-table">';
 		echo '<tr valign="top">';
-		echo '<th scope="row">' . esc_html__( 'Email address', 'ssp' ) . '</th>';
-	  echo '<td><input id="ssp_store_credit_send_email" name="ssp_store_credit_send_email" class="regular-text" /></td>';
+		echo '<th scope="row">' . esc_html__( 'Email address', 'service-pack-for-storefront' ) . '</th>';
+	  echo '<td><input id="spfs_store_credit_send_email" name="spfs_store_credit_send_email" class="regular-text" /></td>';
 		echo '</tr>';
 		echo '<tr valign="top">';
-		echo '<th scope="row">' . esc_html__( 'Amount of the credit', 'ssp' ) . '</th>';
-	  echo '<td><input id="ssp_store_credit_send_amount" name="ssp_store_credit_send_amount" class="regular-text" placeholder="0.00" /></td>';
+		echo '<th scope="row">' . esc_html__( 'Amount of the credit', 'service-pack-for-storefront' ) . '</th>';
+	  echo '<td><input id="spfs_store_credit_send_amount" name="spfs_store_credit_send_amount" class="regular-text" placeholder="0.00" /></td>';
 		echo '</tr>';
     echo '</table>';
-    submit_button( esc_html__( 'Generate a store credit and mail it to your customer', 'ssp' ) );
-    wp_nonce_field( 'ssp_store_credit_send_nonce', 'security' );
+    submit_button( esc_html__( 'Generate a store credit and mail it to your customer', 'service-pack-for-storefront' ) );
+    wp_nonce_field( 'spfs_store_credit_send_nonce', 'security' );
 		echo '</div>';
 	}
   
   public function handler_store_credit_send() {
-    if ( ! isset( $_POST['ssp_store_credit_send_email'] ) || wp_verify_nonce( 'security', 'ssp_store_credit_send_nonce' ) ) return;
-    $email  = sanitize_email( $_POST[ 'ssp_store_credit_send_email'] );
-		$amount = sanitize_text_field( $_POST['ssp_store_credit_send_amount'] );
+    if ( ! isset( $_POST['spfs_store_credit_send_email'] ) || wp_verify_nonce( 'security', 'spfs_store_credit_send_nonce' ) ) return;
+    $email  = sanitize_email( $_POST[ 'spfs_store_credit_send_email'] );
+		$amount = sanitize_text_field( $_POST['spfs_store_credit_send_amount'] );
     if ( ! is_email( $email ) ) {
-      $error_message = esc_html__( 'Invalid email address', 'ssp' );
+      $error_message = esc_html__( 'Invalid email address', 'service-pack-for-storefront' );
     }
     if ( ! is_numeric( $amount ) || $amount < 1 ) {
       $error_message = isset( $error_message ) ? $error_message . '<br />' : '';
-      $error_message .= esc_html__( 'Invalid amount', 'ssp' );
+      $error_message .= esc_html__( 'Invalid amount', 'service-pack-for-storefront' );
     }
     if ( isset( $error_message ) ) {
-      set_transient( 'ssp_store_credit_send_error', $error_message, 60 );
+      set_transient( 'spfs_store_credit_send_error', $error_message, 60 );
       return;
     }
     $coupon_code = uniqid( sanitize_email( $email ) . '-' );
-    apply_filters( 'ssp_store_credit_coupon_code', $coupon_code, $email );
+    apply_filters( 'spfs_store_credit_coupon_code', $coupon_code, $email );
     $coupon_id = wp_insert_post(
       array(
 			  'post_title'   => $coupon_code,
@@ -88,7 +88,7 @@ class SSP_Store_Credit {
 			  'post_type'    => 'shop_coupon'
       )
     );
-		update_post_meta( $coupon_id, 'discount_type', 'ssp_store_credit' );
+		update_post_meta( $coupon_id, 'discount_type', 'spfs_store_credit' );
 		update_post_meta( $coupon_id, 'coupon_amount', $amount );
 		update_post_meta( $coupon_id, 'individual_use', $this->store_credit_options['individual_use'] );
 		update_post_meta( $coupon_id, 'product_ids', '' );
@@ -99,26 +99,26 @@ class SSP_Store_Credit {
 		update_post_meta( $coupon_id, 'free_shipping', 'no' );
 		update_post_meta( $coupon_id, 'customer_email', array( $email ) );
     $this->email_store_credit_send( $email, $coupon_code, $amount );
-    set_transient( 'ssp_store_credit_send_success', __( 'Credit sent.', 'ssp' ), 60 );
+    set_transient( 'spfs_store_credit_send_success', __( 'Credit sent.', 'service-pack-for-storefront' ), 60 );
   }
 
   public function admin_notice_store_credit_send() {
-    if ( $success_message = get_transient( 'ssp_store_credit_send_success' ) ) {
+    if ( $success_message = get_transient( 'spfs_store_credit_send_success' ) ) {
       echo '<div id="message" class="updated fade"><p><strong>' . $success_message . '</strong></p></div>';
-      delete_transient( 'ssp_store_credit_send_success' );
+      delete_transient( 'spfs_store_credit_send_success' );
       return;
     }
-    if ( $error_message = get_transient( 'ssp_store_credit_send_error' ) ) {
+    if ( $error_message = get_transient( 'spfs_store_credit_send_error' ) ) {
       echo '<div id="message" class="error fade"><p><strong>' . $error_message . '</strong></p></div>';
-      delete_transient( 'ssp_store_credit_send_error' );
+      delete_transient( 'spfs_store_credit_send_error' );
     }
   }
    
   private function email_store_credit_send( $email, $coupon_code, $amount ) {
     $mailer        = WC()->mailer();
 		$blogname      = wp_specialchars_decode( get_option( 'blogname' ), ENT_QUOTES );
-		$subject       = sprintf( '[%s] %s', $blogname, __( 'Store Credit', 'ssp' ) );
-		$email_heading =  sprintf( __( 'You have got a credit of %s ', 'ssp' ), woocommerce_price( $amount ) );
+		$subject       = sprintf( '[%s] %s', $blogname, __( 'Store Credit', 'service-pack-for-storefront' ) );
+		$email_heading = sprintf( __( 'You have got a credit of %s ', 'service-pack-for-storefront' ), woocommerce_price( $amount ) );
 		ob_start();
 		$this->send_store_credit_email_template( $email_heading, $coupon_code );
 	  $message = ob_get_clean();
@@ -127,32 +127,35 @@ class SSP_Store_Credit {
 
   private function send_store_credit_email_template( $email_heading, $coupon_code ) {
     do_action( 'woocommerce_email_header', $email_heading );
-    $html  = '<p>' . esc_html__( 'To use your store credit, please, enter the following discount code during your next checkout', 'ssp' ) . '.</p>';
+    $html  = '<p>' . esc_html__( 'To use your store credit, please, enter the following discount code during your next checkout', 'service-pack-for-storefront' ) . '.</p>';
     $html .= '<strong style="margin: 10px 0; font-size: 18px; font-weight: bold; display: block; text-align: center;">' . esc_html( $coupon_code ) . '</strong>';
     $html .='<div style="clear:both;"></div>';
-    apply_filters( 'ssp_store_credit_email_html', $html, $coupon_code );
+    apply_filters( 'spfs_store_credit_email_html', $html, $coupon_code );
     echo $html;
     do_action( 'woocommerce_email_footer' );
   }
 
 	public function store_credit_my_account_template() {
-		if ( $coupons = $this->get_customer_credit() ) {
-			echo '<h2>' . esc_html__( 'My Store Credits', 'ssp' ) . '</h2>';
-			echo '<ul class="ssp-store-credit">';
+    if ( $coupons = $this->get_customer_credit() ) {
+      $coupon_count = 0;
+      ob_start();
+			echo '<h2>' . esc_html__( 'My Store Credits', 'service-pack-for-storefront' ) . '</h2>';
+			echo '<ul class="spfs-store-credit">';
 		  foreach ( $coupons as $code ) {
 				$coupon = new WC_Coupon( $code->post_title );
-				if ( 'ssp_store_credit' === $coupon->type || $coupon->is_store_credit ) {
-          $html = '<li><strong>' . $coupon->code . '</strong> &mdash;' . wc_price( $coupon->amount ) . '</li>';
-          $var = array(
-            'title'  => $code->post_title,
-            'code'   => $coupon->code,
-            'amount' => $coupon->amount
-          );
-          apply_filters( 'ssp_store_credit_my_account', $html, $var );
-          echo $html;
+				if ( 'spfs_store_credit' === $coupon->type || $coupon->is_store_credit ) {
+          echo '<li><strong>' . $coupon->code . '</strong> &mdash;' . wc_price( $coupon->amount ) . '</li>';
+          $coupon_count++;
 				}
 			}
-			echo '</ul>';
+      echo '</ul>';
+      
+      $html = ob_get_clean();
+      apply_filters( 'spfs_store_credit_my_account', $html, $coupons );
+      
+      if ( $coupon_count ) {
+        echo $html;
+      }
 		}
 	}
 
@@ -181,15 +184,15 @@ class SSP_Store_Credit {
 	}
 
 	public function coupon_is_valid( $valid, $coupon ) {
-    if ( $valid && ( 'ssp_store_credit' === $coupon->type || $coupon->is_store_credit ) && $coupon->amount <= 0 ) {
-			wc_add_notice( esc_html__( 'Your credit is over.', 'ssp' ), 'error' );
+    if ( $valid && ( 'spfs_store_credit' === $coupon->type || $coupon->is_store_credit ) && $coupon->amount <= 0 ) {
+			wc_add_notice( esc_html__( 'Your credit is over.', 'service-pack-for-storefront' ), 'error' );
 			return false;
 		}
 		return $valid;
 	}
 
   public function coupon_is_valid_for_cart( $valid, $coupon ) {
-    if ( ( 'ssp_store_credit' === $coupon->type || $coupon->is_store_credit ) ) {
+    if ( ( 'spfs_store_credit' === $coupon->type || $coupon->is_store_credit ) ) {
 			return true;
 		}
 		return $valid;
@@ -198,7 +201,7 @@ class SSP_Store_Credit {
 	public function update_credit_amount() {
     if ( $coupons = WC()->cart->get_coupons() ) {
 			foreach ( $coupons as $code => $coupon ) {
-				if ( ( 'ssp_store_credit' === $coupon->type || $coupon->is_store_credit ) ) {
+				if ( ( 'spfs_store_credit' === $coupon->type || $coupon->is_store_credit ) ) {
 					$credit_remaining = max( 0, ( $coupon->amount - WC()->cart->coupon_discount_amounts[ $code ] ) );
 					if ( $credit_remaining <= 0 && $this->store_credit_options['after_usage'] ) {
 						wp_delete_post( $coupon->id );
@@ -212,22 +215,22 @@ class SSP_Store_Credit {
 	}
   
   public function coupon_get_discount_amount( $discount, $discounting_amount, $cart_item, $single, $coupon ) {
-    if ( ( 'ssp_store_credit' === $coupon->type || $coupon->is_store_credit ) && ! is_null( $cart_item ) ) {
+    if ( ( 'spfs_store_credit' === $coupon->type || $coupon->is_store_credit ) && ! is_null( $cart_item ) ) {
 			$discount_percent = 0;
 			if ( WC()->cart->subtotal_ex_tax ) {
 				$discount_percent = ( $cart_item['data']->get_price_excluding_tax() * $cart_item['quantity'] ) / WC()->cart->subtotal_ex_tax;
 			}
 			$discount = min( ( $coupon->amount * $discount_percent ) / $cart_item['quantity'], $discounting_amount );
 		}
-		elseif ( ( 'ssp_store_credit' === $coupon->type || $coupon->is_store_credit ) ) {
+		elseif ( ( 'spfs_store_credit' === $coupon->type || $coupon->is_store_credit ) ) {
 			$discount = min( $coupon->amount, $discounting_amount );
 		}
 		return $discount;
 	}
   
   public function cart_totals_coupon_label( $label, $coupon ) {
-    if ( ( 'ssp_store_credit' === $coupon->type || $coupon->is_store_credit ) ) {
-			$label = __( 'Store Credit', 'ssp' );
+    if ( ( 'spfs_store_credit' === $coupon->type || $coupon->is_store_credit ) ) {
+			$label = __( 'Store Credit', 'service-pack-for-storefront' );
 		}
 		return $label;
 	}
