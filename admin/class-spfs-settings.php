@@ -8,6 +8,21 @@ class SPFS_Settings {
   private $settings_fields;
   private $settings_sections;
 
+  public static function get_instance() {
+    if ( is_null( self::$instance ) ) {
+      self::$instance = new SPFS_Settings();
+    }
+    return self::$instance;
+  }
+
+  public function get_settings_fields() {
+    return $this->settings_fields;
+  }
+  
+  public function get_settings_sections() {
+    return $this->settings_sections;
+  }
+  
   private function __construct() {
     $this->set_settings_fields();
     $this->set_settings_sections();
@@ -22,7 +37,8 @@ class SPFS_Settings {
         'name'         => __( 'Aggregator', 'service-pack-for-storefront' ),
         'type'         => 'checkbox',
         'section'      => 'spfs_settings_modules_activation',
-        'description'  => __( 'Aggregates the last blog posts on home page and product reviews in product category pages.', 'service-pack-for-storefront' )
+        'description'  => __( 'Aggregates the last blog posts on home page and product reviews in product category pages.', 'service-pack-for-storefront' ),
+        'require'      => 'storefront'
       ),
       'contact_form'   => array(
         'name'         => __( 'Contact Form', 'service-pack-for-storefront' ),
@@ -34,25 +50,29 @@ class SPFS_Settings {
         'name'         => __( 'Dynamic Sidebar', 'service-pack-for-storefront' ),
         'type'         => 'checkbox',
         'section'      => 'spfs_settings_modules_activation',
-        'description'  => __( 'Adds specific sidebar for product page, product category page, post page, etc...', 'service-pack-for-storefront' )
+        'description'  => __( 'Adds specific sidebar for product page, product category page, post page, etc...', 'service-pack-for-storefront' ),
+        'require'      => 'storefront'
       ),
       'float_menu'     => array(
         'name'         => __( 'Float Menu', 'service-pack-for-storefront' ),
         'type'         => 'checkbox',
         'section'      => 'spfs_settings_modules_activation',
-        'description'  => __( 'Makes the basic storefront navigation menu floating when scrolling down.', 'service-pack-for-storefront' )
+        'description'  => __( 'Makes the basic storefront navigation menu floating when scrolling down.', 'service-pack-for-storefront' ),
+        'require'      => 'storefront'
       ),
       'order_tracking' => array(
         'name'         => __( 'Order Tracking', 'service-pack-for-storefront' ),
         'type'         => 'checkbox',
         'section'      => 'spfs_settings_modules_activation',
-        'description'  => __( 'Gives you and your customers the ability to track simply orders via links pointing to the shipper\'s site tracking service.', 'service-pack-for-storefront' )
+        'description'  => __( 'Gives you and your customers the ability to track simply orders via links pointing to the shipper\'s site tracking service.', 'service-pack-for-storefront' ),
+        'require'      => 'woocommerce'
       ),
       'sharer'         => array(
         'name'         => __( 'Sharer', 'service-pack-for-storefront' ),
         'type'         => 'checkbox',
         'section'      => 'spfs_settings_modules_activation',
-        'description'  => __( 'Brings to your customers the possibility to share easily products and blog posts on their social network accounts.', 'service-pack-for-storefront' )
+        'description'  => __( 'Brings to your customers the possibility to share easily products and blog posts on their social network accounts.', 'service-pack-for-storefront' ),
+        'require'      => 'storefront'
       ),
       'slider'         => array(
         'name'         => __( 'Slider', 'service-pack-for-storefront' ),
@@ -64,7 +84,8 @@ class SPFS_Settings {
         'name'         => __( 'Store Credit', 'service-pack-for-storefront' ),
         'type'         => 'checkbox',
         'section'      => 'spfs_settings_modules_activation',
-        'description'  => __( 'Gives you the ability to create and send by email store credits to your customers.', 'service-pack-for-storefront' )
+        'description'  => __( 'Gives you the ability to create and send by email store credits to your customers.', 'service-pack-for-storefront' ),
+        'require'      => 'woocommerce'
       ),
       'facebook'       => array(
         'name'         => 'Facebook',
@@ -166,21 +187,6 @@ class SPFS_Settings {
       return $this->settings_sections = $settings_sections;
     }
   }
-
-  public static function get_instance() {
-    if ( is_null( self::$instance ) ) {
-      self::$instance = new SPFS_Settings();
-    }
-    return self::$instance;
-  }
-
-  public function get_settings_fields() {
-    return $this->settings_fields;
-  }
-  
-  public function get_settings_sections() {
-    return $this->settings_sections;
-  }
  
   public function init_options_page() {
     add_options_page(
@@ -230,7 +236,6 @@ class SPFS_Settings {
             'shipper_url_' . $field_number  => $this->settings_fields['shipper_url_0']
           );
           $this->set_settings_fields( $new_fields );
-          //$this->settings_fields = array_merge( $this->settings_fields, $new_fields );
           $field_number ++;
         }
       }
@@ -252,6 +257,7 @@ class SPFS_Settings {
           'slug'      => $slug,
           'value'     => $value,
           'type'      => $setting['type'],
+          'require'   => isset( $setting['require'] ) ? $setting['require'] : false,
           'label_for' => $slug
           )
         );
@@ -299,19 +305,22 @@ class SPFS_Settings {
   }
 
   public function settings_fields_template( $args ) {
-    $section       = $args['section'];
-    $field         = $args['field'];
-    $slug          = $args['slug'];
-    $name          = 'spfs_settings[' . $section . '][' . $field . ']';
-    $type          = $args['type'];
-    $value         = $args['value'];
-    $description   = isset( $this->settings_fields[$field]['description'] ) ? $this->settings_fields[$field]['description'] : false;
-    
+    $missing_dependency = SPFS::get_instance()->is_missing_dependency( $args['require'] );
+    $section            = $args['section'];
+    $field              = $args['field'];
+    $slug               = $args['slug'];
+    $name               = 'spfs_settings[' . $section . '][' . $field . ']';
+    $type               = $args['type'];
+    $require            = $args['require'] ? ucfirst( $args['require'] ) : false;
+    $readonly           = $missing_dependency ? 'readonly onclick="return false"' : '';
+    $value              = $missing_dependency ? 0 : $args['value'];
+    $description        = isset( $this->settings_fields[$field]['description'] ) ? $this->settings_fields[$field]['description'] : false;
+
     if ( $type === 'checkbox' ) {
       echo '<input type="hidden" name="' . $name . '" value="0">';
-      echo '<input type="' . $type . '" id="' . $slug . '" name="' . $name . '" value="1" ' . checked( 1, $value, false ) . ' />';
+      echo '<input type="' . $type . '" id="' . $slug . '" name="' . $name . '" value="1" ' . checked( 1, $value, false ) . $readonly . ' />';
       if ( ! empty( $description ) ) {
-        echo '<label for="' . $slug . '">' . $description . '</label>';
+        echo '<label for="' . $slug . '">' . $description . $requirement = $require ? ' <strong>' . sprintf( __( 'Require %s.', 'service-pack-for-storefront' ), $require ) . '</strong>' : '' . '</label>';
       }
     }
     elseif ( $type === 'text' ) {

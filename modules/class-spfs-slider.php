@@ -1,6 +1,8 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+  exit;
+}
 
 class SPFS_Slider {
 
@@ -24,6 +26,7 @@ class SPFS_Slider {
   );
 
   public function __construct() {
+    add_shortcode( 'spfs_slider', array( $this, 'shortcode' ) );
     add_action( 'init', array( $this, 'register_slide_post_type' ) );
     add_action( 'woocommerce_before_main_content', array( $this, 'template' ), 30 );  
     add_action( 'save_post', array( $this, 'save' ) );
@@ -32,13 +35,22 @@ class SPFS_Slider {
   }
 
   public function enqueue_scripts() {
-    if ( ! is_front_page() ) return;
-    wp_register_style( 'spfs-slider-style', SPFS_URL . 'assets/css/slider.min.css' );
-    wp_register_script( 'spfs-slider-init-script', SPFS_URL . 'assets/js/slider-init.min.js', array( 'jquery' ) );
-	  wp_register_script( 'spfs-slider-script', SPFS_URL . 'assets/js/slider.min.js', array( 'jquery' ), false, true );
-    wp_enqueue_style( 'spfs-slider-style' );
-		wp_enqueue_script( 'spfs-slider-init-script' );
-		wp_enqueue_script( 'spfs-slider-script' );
+    if ( is_front_page() || SPFS::get_instance()->page_has_shortcode( 'spfs_slider' ) ) {
+      wp_register_style( 'spfs-slider-style', SPFS_URL . 'assets/css/slider.min.css' );
+      wp_register_script( 'spfs-slider-init-script', SPFS_URL . 'assets/js/slider-init.min.js', array( 'jquery' ) );
+	    wp_register_script( 'spfs-slider-script', SPFS_URL . 'assets/js/slider.min.js', array( 'jquery' ), false, true );
+      wp_enqueue_style( 'spfs-slider-style' );
+		  wp_enqueue_script( 'spfs-slider-init-script' );
+		  wp_enqueue_script( 'spfs-slider-script' );
+    }
+  }
+  
+  public function shortcode() {
+    ob_start();
+	  $this->template();
+	  $slider = ob_get_clean();
+    
+    return $slider;
   }
   
   public function register_slide_post_type() {
@@ -144,22 +156,28 @@ class SPFS_Slider {
   }
   
   public function template() {
-    if ( ! is_front_page() ) return;
+    if ( ! is_front_page() && ! SPFS::get_instance()->page_has_shortcode( 'spfs_slider' ) ) {
+      return;
+    }
     $args = array(
 		  'post_type'      => 'spfs_slide',
 		  'posts_per_page' => 5
 	  );  
     $query = new WP_Query( $args );
+    
     if ( $query->have_posts() ) {
       echo '<div class="flexslider">';
       echo '<ul class="slides">';
+      
       while ( $query->have_posts() ) {
         $query->the_post();
         echo '<li>';
+        
         if ( get_post_meta( get_the_id(), 'spfs_slide_url', true) != '' ) {
           echo '<a href="' . esc_url( get_post_meta( get_the_id(), 'spfs_slide_url', true ) ) . '">';
 			  }
         echo the_post_thumbnail();
+        
         if ( get_post_meta( get_the_id(), 'spfs_slide_url', true ) != '' ) {
           echo '</a>';
         }

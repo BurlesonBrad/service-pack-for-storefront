@@ -4,31 +4,15 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class SPFS_Contact_Form {
 
-  private $page_has_shortcode = false;
-
   public function __construct() {
     add_shortcode( 'spfs_contact_form', array( $this, 'shortcode' ) );
-    add_action( 'the_posts', array( $this, 'check_page_has_shortcode' ) );
     add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
     add_action( 'wp_ajax_spfs_contact_form_handler', array( $this, 'handler' ) );
     add_action( 'wp_ajax_nopriv_spfs_contact_form_handler', array( $this, 'handler' ) );
   }
 
-  public function check_page_has_shortcode( $posts ) {
-    if ( ! shortcode_exists( 'spfs_contact_form' ) || empty( $posts ) ) {
-      return $posts;
-    }
-    foreach ( $posts as $post ) {
-      if ( has_shortcode( $post->post_content, 'spfs_contact_form' ) ) {
-        $this->page_has_shortcode = true;
-        return $posts;
-      }
-    }
-    return $posts;
-  }
-
   public function enqueue_scripts() {
-    if ( $this->page_has_shortcode ) {
+    if ( SPFS::get_instance()->page_has_shortcode( 'spfs_contact_form' ) ) {
       wp_register_style( 'spfs-contact-form-style', SPFS_URL . 'assets/css/contact-form.min.css' );
 	    wp_register_script( 'spfs-contact-form-script', SPFS_URL . 'assets/js/contact-form.min.js', array( 'jquery' ) );
 	    wp_enqueue_style( 'spfs-contact-form-style' );
@@ -41,7 +25,8 @@ class SPFS_Contact_Form {
     ob_start();
 	  $this->template();
 	  $contact_form = ob_get_clean();
-	  return $contact_form;
+    
+    return $contact_form;
   }
 
   private function template() { 
@@ -148,27 +133,25 @@ class SPFS_Contact_Form {
 
 	  // Mailer
     if ( empty( $error_detected ) && ! empty( $valid_email ) && ! empty( $valid_message ) ) {
-
-      // PHP Mailer Variables
-      $mailer = WC()->mailer();
+      // PHP Mailer Variable
 		  $to = get_option( 'admin_email' );
       $subject = esc_html__( 'You have got an email from', 'service-pack-for-storefront' ) . ' ' . $valid_name;
 		  $headers = array( 'From: ' . $valid_email,
 			  'Reply-To: ' . $valid_email,
 			  'Content-Type: text/html; charset=UTF-8'
       );
-      apply_filters( 'spfs_contact_form_recipient', $to );
-      apply_filters( 'spfs_contact_form_subject', $subject );
-
-      // Get the html message
-      ob_start();
-      $this->email_template( $subject, $valid_message );
-      $content = ob_get_clean();
+      $email_compenents = array(
+        'recipient' => $to,
+        'subject'   => $subject,
+        'message'   => $valid_message,
+        'from'      => $valid_email
+      );
+      apply_filters( 'spfs_contact_form_email_compenents', $email_compenents );
 
       // Send Email
-		  if ( ! $sent_message = $mailer->send( $to, $subject, $content, $headers ) ) {  
+		  if ( ! $this->mailer( $to, $subject, $valid_message, $headers ) ) {  
         $errors->add( 'failure', $response_message['failure'] );
-		  }
+      }
 	  }
     
     // AJAX Response
@@ -186,10 +169,27 @@ class SPFS_Contact_Form {
 	  exit;
   }
 
-  private function email_template( $subject, $valid_message ) {
-    do_action( 'woocommerce_email_header', $subject );
-    echo $valid_message;
-    echo '<div style="clear:both;"></div>';
-    do_action( 'woocommerce_email_footer' );
+  private function mailer( $to, $subject, $message, $headers ) {
+    if ( ! SPFS::get_instance()->is_missing_dependency( 'woocommerce' ) ) {
+      $mailer = WC()->mailer();
+      $is_sent = $mailer->send( $to, $subject, $this->email_template( $subject, $message ), $headers );
+    }
+    else {
+      $is_sent = wp_mail( $to, $subject, $this->email_template( $subject, $message ), $headers );
+    }
+    return $is_sent;
+  }
+
+  private function email_template( $subject, $message ) {
+    $email_header_hook = ! SPFS::get_instance()->is_missing_dependency( 'woocommerce' ) ? 'woocommerce_email_header' : 'spfs_email_header';
+    $email_footer_hook = ! SPFS::get_instance()->is_missing_dependency( 'woocommerce' ) ? 'woocommerce_email_footer' : 'spfs_email_footer';
+
+    ob_start();
+    do_action( $email_header_hook, $subject );
+    echo $message;
+    do_action( $email_footer_hook );
+    $message = ob_get_clean();
+
+    return $message;
   }
 }

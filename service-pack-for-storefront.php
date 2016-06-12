@@ -16,8 +16,9 @@ define( 'SPFS_URL', plugins_url( '/', __FILE__ ) );
 
 require_once( SPFS_DIR . 'class-spfs.php' );
 
+// Get a singleton instance of the main plugin class.
 $SPFS = SPFS::get_instance();
 
 register_activation_hook( __FILE__, array( $SPFS, 'init_db' ) );
-//TODO: use uninstall hook instead.
+// Will use uninstall hook later.
 register_deactivation_hook( __FILE__, array( $SPFS, 'clean_db' ) );

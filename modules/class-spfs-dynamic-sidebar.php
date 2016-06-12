@@ -18,23 +18,35 @@ class SPFS_Dynamic_Sidebar {
   public function sidebar_template() {
     $sidebar = null;
 
-    if ( is_front_page() ) {
-      $sidebar = 'sidebar-1';
-    } elseif ( is_home() || is_category() || is_date() || is_single() && ! is_product() ) {
+    if ( ! SPFS::get_instance()->is_missing_dependency( 'woocommerce' ) ) {
+      if ( is_front_page() ) {
+        $sidebar = 'sidebar-1';
+      } elseif ( is_home() || is_category() || is_date() || is_single() && ! is_product() ) {
         $sidebar = 'sidebar-blog';
-    } elseif ( is_product_category() || is_search() && is_woocommerce() ) {
+      } elseif ( is_product_category() || is_search() && is_woocommerce() ) {
         $sidebar = 'sidebar-product-category';
-    } elseif ( is_product() ) {
+      } elseif ( is_product() ) {
         $sidebar = 'sidebar-product';
-    } elseif ( is_page() && ! is_cart() && ! is_checkout() && ! is_account_page() ) {
+      } elseif ( is_page() && ! is_cart() && ! is_checkout() && ! is_account_page() ) {
         $sidebar = 'sidebar-page';
-    } elseif ( is_cart() || is_checkout() || is_account_page() ) {
+      } elseif ( is_cart() || is_checkout() || is_account_page() ) {
         $sidebar = 'sidebar-special';
+      }
+    }
+    else {
+      if ( is_front_page() ) {
+        $sidebar = 'sidebar-1';
+      } elseif ( is_home() || is_category() || is_date() || is_single()) {
+        $sidebar = 'sidebar-blog';
+      } elseif ( is_page() ) {
+        $sidebar = 'sidebar-page';
+      }
     }
     apply_filters( 'spfs_dynamic_sidebar_template', $sidebar );
 
-    if ( ! is_active_sidebar( $sidebar ) ) return;
-    
+    if ( ! is_active_sidebar( $sidebar ) ) {
+      return;
+    }
     echo '<div id="secondary" class="widget-area" role="complementary">';
     dynamic_sidebar( $sidebar );
     echo '</div>';
@@ -84,36 +96,9 @@ class SPFS_Dynamic_Sidebar {
 		    'after_title' 	=> '</p>'
 	    ),
       array(
-		    'name'					=> __( 'Product Category Sidebar', 'service-pack-for-storefront' ),
-		    'id'						=> 'sidebar-product-category',
-		    'description' 	=> __( 'Sidebar displaying on product categories.', 'service-pack-for-storefront' ),
-		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p class="widget-title">',
-		    'after_title' 	=> '</p>'
-	    ),
-      array(
-		    'name'					=> __( 'Product Sidebar', 'service-pack-for-storefront' ),
-		    'id'						=> 'sidebar-product',
-		    'description' 	=> __( 'Sidebar displaying on product page.', 'service-pack-for-storefront' ),
-		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p class="widget-title">',
-		    'after_title' 	=> '</p>'
-	    ),
-      array(
 		    'name'					=> __( 'Page Sidebar', 'service-pack-for-storefront' ),
 		    'id'						=> 'sidebar-page',
 		    'description' 	=> __( 'Sidebar displaying on single pages.', 'service-pack-for-storefront' ),
-		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
-		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p class="widget-title">',
-		    'after_title' 	=> '</p>'
-	    ),
-      array(
-		    'name'					=> __( 'Special Sidebar', 'service-pack-for-storefront' ),
-		    'id'						=> 'sidebar-special',
-		    'description' 	=> __( 'Sidebar displaying on my account, checkout, and cart pages.', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
 		    'before_title'	=> '<p class="widget-title">',
@@ -156,10 +141,43 @@ class SPFS_Dynamic_Sidebar {
 		    'after_title' 	=> '</p>'
 	    )
     );
+    if ( ! SPFS::get_instance()->is_missing_dependency( 'woocommerce' ) ) {
+      $sidebars_wc = array(
+        array(
+		      'name'					=> __( 'Product Category Sidebar', 'service-pack-for-storefront' ),
+		      'id'						=> 'sidebar-product-category',
+		      'description' 	=> __( 'Sidebar displaying on product categories.', 'service-pack-for-storefront' ),
+		      'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+		      'after_widget'	=> '</aside>',
+		      'before_title'	=> '<p class="widget-title">',
+		      'after_title' 	=> '</p>'
+	      ),
+        array(
+		      'name'					=> __( 'Product Sidebar', 'service-pack-for-storefront' ),
+		      'id'						=> 'sidebar-product',
+		      'description' 	=> __( 'Sidebar displaying on product page.', 'service-pack-for-storefront' ),
+		      'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+		      'after_widget'	=> '</aside>',
+		      'before_title'	=> '<p class="widget-title">',
+		      'after_title' 	=> '</p>'
+	      ),
+        array(
+		      'name'					=> __( 'Special Sidebar', 'service-pack-for-storefront' ),
+		      'id'						=> 'sidebar-special',
+		      'description' 	=> __( 'Sidebar displaying on my account, checkout, and cart pages.', 'service-pack-for-storefront' ),
+		      'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+		      'after_widget'	=> '</aside>',
+		      'before_title'	=> '<p class="widget-title">',
+		      'after_title' 	=> '</p>'
+	      )
+      );
+      $sidebars = array_merge( $sidebars_wc, $sidebars );
+    }
     apply_filters( 'spfs_dynamic_sidebar_register', $sidebars );
     
-    if ( ! is_array( $sidebars ) ) return;
-     
+    if ( ! is_array( $sidebars ) ) {
+      return;
+    }
     foreach ( $sidebars as $sidebar ) {
       if ( isset( $sidebar['id'] ) ) {
         register_sidebar( $sidebar );

@@ -7,18 +7,9 @@ class SPFS_Sharer {
   public function __construct() {
     add_action( 'storefront_single_post', array( $this, 'template' ), 50 );
     add_action( 'woocommerce_share', array ( $this, 'template' ) );
-    add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
   }
 
-  public function enqueue_scripts() {
-    if ( is_single() || is_product() ) {
-      wp_register_style( 'spfs-sharer-style', SPFS_URL . 'assets/css/sharer.min.css' );
-		  wp_enqueue_style( 'spfs-sharer-style' );
-	  }
-  }
-
-  public function template() {
-    if ( ! is_single() && ! is_product() ) return;
+  public function template() {  
     $sharers = array(
       array(
         'slug' => 'facebook',
@@ -34,12 +25,15 @@ class SPFS_Sharer {
       )
     );
     apply_filters( 'spfs_sharer_list', $sharers );
-    if ( ! is_array( $sharers ) || ! isset( $sharers ) ) return;
     
+    if ( ! is_array( $sharers ) || ! isset( $sharers ) ) {
+      return;
+    }
     echo '<ul class="spfs-sharer">';
 
     $sharers_number = count( $sharers );
     $sharers_count = 0;
+    
     foreach ( $sharers as $sharer ) {
       $sharers_count ++;
       $first = $sharers_count === 1 ? ' first' : '';
@@ -49,5 +43,12 @@ class SPFS_Sharer {
       echo '</li>';
     }
     echo '</ul>';
+
+    add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+  }
+
+  public function enqueue_scripts() {
+    wp_register_style( 'spfs-sharer-style', SPFS_URL . 'assets/css/sharer.min.css' );
+		wp_enqueue_style( 'spfs-sharer-style' );
   }
 }

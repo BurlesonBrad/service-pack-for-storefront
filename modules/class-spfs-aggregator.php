@@ -70,6 +70,10 @@ class SPFS_Aggregator {
   }
 
   public function review_loop() {
+    $SPFS = SPFS::get_instance();
+    if ( $SPFS->is_missing_dependency( 'woocommerce' ) ) {
+      return;
+    }
     if ( is_product_category() ) {
 			$queried_object = get_queried_object();
 			$post_query_args = array(
