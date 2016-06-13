@@ -1,13 +1,41 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+  exit; // Exit if accessed directly...
+}
 
+/**
+ * Order Tracking module.
+ *
+ * @class    SPFS_Order_Tracking
+ * @since    0.0.1
+ * @package  SPFS/Modules
+ * @category Modules
+ * @author   Opportus
+ */
 class SPFS_Order_Tracking {
 
-  private $order_tracking_options = null;
-  private $tracking_shipper = null;
-  private $tracking_number  = null;
-	
+  /**
+   * @var array $order_tracking_options Unserialized and restructured options.
+   * @see SPFS_Order_Tracking::init_order_tracking_options
+   */
+  private $order_tracking_options;
+
+  /**
+   * @var string $tracking_shipper
+   * @see SPFS_Order_Tracking::init_tracking_meta
+   */
+  private $tracking_shipper;
+
+  /**
+   * @var string $tracking_number
+   * @see SPFS_Order_Tracking::init_tracking_meta
+   */
+  private $tracking_number;
+
+  /**
+   * Order Tracking module constructor.
+   */
   public function __construct() {
     $this->init_order_tracking_options();
     add_filter( 'is_protected_meta', array( $this, 'hide' ), 10, 2 );
@@ -19,9 +47,11 @@ class SPFS_Order_Tracking {
   }
 
   /**
-   * Grep serialized 'order_tracking' options and return them in a nicely structured array.
+   * Initialize order tracking options.
+   *
+   * Grep serialized 'order_tracking' options from wp_options table and return them in a nicely structured array.
    * Pretty complicated for what it has to do... I believe there are better implementations or approches.
-   * Feel free to PR it if you have !
+   * If you have a better idea, please, let me know !
    *
    * The option we're grepping are structured this way:
    * 
@@ -34,52 +64,65 @@ class SPFS_Order_Tracking {
    *   )
    * )
    * NOTE: The pair of option fields are added dynamically when a new shipper is found.
+   * The '_0' or '_1' part is the incremental ID of the pair of fields.
    * For more info, check SPFS_Settings.
    *
-   * We're attemting to return the options this way:
+   * We're attempting to return the options this way:
    *
    * 'foobar_shipper' = array(
    *   'name'         => 'Foobar Shipper',
    *   'url'          => 'http://www.foobar.com/tracking-service?url='
    * )
+   *
+   * @return array SPFS_Order_Tracking::$order_tracking_options
+   * @see    SPFS_Settings
    */
    private function init_order_tracking_options() {
     $options = get_option( 'spfs_settings' );
     $shippers_options =  isset( $options['order_tracking'] ) ? $options['order_tracking'] : null;
-    $shippers_tmp = array(); // Temporary shippers array classified by their ID.
+    $shippers_tmp = array(); // Temporary array which will get filled by shippers classified by their ID.
     $shippers = array(); // Futur shippers array which will have their name (if available) as key. Else by thier ID.
     $number = 0;
 
-    if ( ! isset( $shippers_options ) ) return;
+    if ( is_null( $shippers_options ) ) {
+      return;
+    }
     foreach ( $shippers_options as $key => $value ) {
       list( , $option, $id ) = explode( '_', $key );
-      $shippers_tmp[$id][$option] = isset( $value ) ? $value : null;
-      if ( $option === 'name' ) {
-        // If shipper's name has not been set, set his ID as key.
-        if ( ! isset( $value ) ) {
+      $shippers_tmp[ $id ][ $option ] = isset( $value ) ? $value : null;
+      
+      if ( 'name' === $option ) {
+        // If shipper's name has not been set by admin, set his ID as key.
+        if ( is_null( $value ) ) {
           $new_key = $id;
         }
-        // Else, his name value as key.
+        // Else, set his name value as key.
         else {
           $new_key = str_replace( ' ', '_', strtolower( $value ) );
           // We have a shipper.
           $any_shipper = true;
         }
-        $shippers[$new_key] = null;
+        $shippers[ $new_key ] = null;
       }
     }
     // Check if we've got a shipper.
-    if ( ! isset( $any_shipper ) ) {
-      return;
+    if ( isset( $any_shipper ) ) {
+      // Change shippers keys by their new ID.
+      foreach ( $shippers as $key => $value ) {
+        $shippers[ $key ] = $shippers_tmp[ $number ];
+        $number ++;
+      }
+      $this->order_tracking_options = $shippers;
     }
-    // Change shippers keys by their new ID.
-    foreach ( $shippers as $key => $value ) {
-      $shippers[$key] = $shippers_tmp[$number];
-      $number ++;
-    }
-    $this->order_tracking_options = $shippers;
   }
 
+  /**
+   * Initialize order tracking post meta.
+   *
+   * @param mixed null|int $post_ID (default: null)
+   * @see   SPFS_Order_Tracking::$tracking_shipper
+   * @see   SPFS_Order_Tracking::$tracking_number
+   */
   private function init_tracking_meta( $post_ID = null ) {
     if ( is_null( $post_ID ) ) {
       global $post;
@@ -96,6 +139,11 @@ class SPFS_Order_Tracking {
     $this->tracking_number  = ! empty( $post_meta = get_post_meta( $post_ID, 'spfs_order_tracking_number', true ) ) ? $post_meta : null;
   }
 
+  /**
+   * Add meta box.
+   *
+   * Hooked into 'add_meta_boxes' action.
+   */
   public function add_meta_boxes() {
     add_meta_box(
       'spfs_order_tracking',
@@ -107,13 +155,18 @@ class SPFS_Order_Tracking {
     );
 	}
 
+  /**
+   * Meta box template. 
+   */
   public function meta_box() {
     if ( ! isset( $this->order_tracking_options ) ) {
-      echo '<p>' . esc_html__( 'You first need to add new shippers on' ) . ' <a href="' . esc_url( admin_url( 'options-general.php?page=spfs_settings_page' ) ) . '">' . ' Service Pack for Storefront ' . esc_html__( 'settings page', 'service-pack-for-storefront' ) . '</a></p>';
+      echo '<p>' . sprintf( __( 'You first need to add new shippers on the %s.', 'service-pack-for-storefront' ), $link = '<a href="' . esc_url( admin_url( 'options-general.php?page=spfs_settings_page' ) ) . '">' . esc_html__( 'settings page', 'service-pack-for-storefront' ) ) . '</p>';
+      
       return;
     }
     $this->init_tracking_meta();
-    echo '<p class="description">' . esc_html__( 'Select the shipper, enter your tracking number and save', 'service-pack-for-storefront' ) . '...</p>';
+
+    echo '<p class="description">' . esc_html__( 'Select the shipper, enter your tracking number and save...', 'service-pack-for-storefront' ) . '</p>';
     echo '<p><label for="spfs_order_tracking_shipper">' . esc_html__( 'Shipper', 'service-pack-for-storefront' ) . '</label /><br />';
     echo '<select id="spfs_order_tracking_shipper" name="spfs_order_tracking_shipper">';
     echo '<option value="">' . esc_html__( 'Select the shipper', 'service-pack-for-storefront' ) . '</option>';
@@ -121,6 +174,7 @@ class SPFS_Order_Tracking {
     foreach ( $this->order_tracking_options as $key => $value ) {
       if ( ! is_int( $key ) ) {
         $selected = ( $this->tracking_shipper === $key ) ? 'selected ' : '';
+
         echo '<option ' . $selected . 'value="' . esc_attr( $key ) . '">' . esc_html( $value['name'] ) . '</option>';
       }
     }
@@ -129,10 +183,17 @@ class SPFS_Order_Tracking {
     echo '<input type="text" id="spfs_order_tracking_number" name="spfs_order_tracking_number" value="' . esc_attr( $this->tracking_number ) . '" /></p>';
     
     if ( isset( $this->tracking_number ) && isset( $this->tracking_shipper ) ) {
-      echo '<a href="' . esc_url( $this->order_tracking_options[$this->tracking_shipper]['url'] . $this->tracking_number ) . '" rel="nofollow" target="_blank">' . esc_html__( 'Track it', 'service-pack-for-storefront' ) . '</a>';
+      echo '<a href="' . esc_url( $this->order_tracking_options[ $this->tracking_shipper ]['url'] . $this->tracking_number ) . '" rel="nofollow" target="_blank">' . esc_html__( 'Track it', 'service-pack-for-storefront' ) . '</a>';
     }
   }
-	
+
+  /**
+   * Save order tracking meta.
+   *
+   * Hooked into 'save_post' action.
+   *
+   * @param int $post_ID
+   */
   public function save( $post_ID ) {
     if ( empty( $_POST['spfs_order_tracking_shipper'] ) || empty( $_POST['spfs_order_tracking_number'] ) || ! current_user_can( 'edit_post', $post_ID ) ) {
       return;
@@ -147,6 +208,11 @@ class SPFS_Order_Tracking {
     else set_transient( 'spfs_order_tracking_error', true, 60 );
   }
 
+  /**
+   * Admin notice template
+   *
+   * Hooked into 'admin_notices' action.
+   */
   public function admin_notice() {
     if ( get_transient( 'spfs_order_tracking_error' ) ) {
       echo '<div class="updated error notice is-dismissible">';
@@ -156,6 +222,11 @@ class SPFS_Order_Tracking {
     }
 	}
 
+  /**
+   * Email template.
+   *
+   * Hooked into 'woocommerce_email_order_meta' action.
+   */
   public function email_template() {
     $this->init_tracking_meta();
     
@@ -166,33 +237,52 @@ class SPFS_Order_Tracking {
     echo apply_filters( 'spfs_order_tracking_email_template', $html );
 	}	
 
+  /**
+   * Frontend template.
+   *
+   * Hooked into 'woocommerce_before_my_account' action.
+   *
+   */
   public function frontend_template() {
     $customer_post_orders = $this->get_customer_post_orders();
-    if ( ! isset( $customer_post_orders ) ) return;
+    
+    if ( ! isset( $customer_post_orders ) ) {
+      return;
+    }
     ob_start();
     
     foreach ( $customer_post_orders as $post_order ) {
       $order = new WC_Order( $post_order->ID );
-			$this->init_tracking_meta( $post_order->ID );
+    
+      $this->init_tracking_meta( $post_order->ID );
+      
       if ( isset( $this->tracking_shipper ) && isset( $this->tracking_number ) ) {
         $loop  = '<li>';
-			  $loop .= '<strong>' . esc_html__( 'Order N°', 'service-pack-for-storefront' ) . ' ' . esc_html( $order->get_order_number() ) . '</strong><br />';
-			  $loop .= esc_html__( 'Sent by', 'service-pack-for-storefront' ) . ' ' . esc_html( $this->order_tracking_options[$this->tracking_shipper]['name'] ) . '<br />';
-        $loop .= esc_html__( 'Tracking number', 'service-pack-for-storefront' ) . ': '. esc_html( $this->tracking_number ) . '<br />';
-		    $loop .= esc_html__( 'You can track anytime you order by clicking', 'service-pack-for-storefront' ) . ' ' . '<a href="' . esc_url( $this->order_tracking_options[$this->tracking_shipper]['url'] . $this->tracking_number ) . '" rel="nofollow" target="_blank">' . esc_html__( 'here', 'service-pack-for-storefront' ) . '</a>.';
+			  $loop .= '<strong>' . sprintf( esc_html__( 'Order N° %s', 'service-pack-for-storefront' ), $number = esc_html( $order->get_order_number() ) ) . '</strong><br />';
+			  $loop .= sprintf( esc_html__( 'Sent by %s', 'service-pack-for-storefront' ), $shipper = esc_html( $this->order_tracking_options[ $this->tracking_shipper ]['name'] ) ) . '<br />';
+        $loop .= sprintf( esc_html__( 'Tracking number: %s', 'service-pack-for-storefront' ), $tracking = esc_html( $this->tracking_number ) ) . '<br />';
+		    $loop .= sprintf( esc_html__( 'You can track anytime you order by clicking %s', 'service-pack-for-storefront' ), $link = '<a href="' . esc_url( $this->order_tracking_options[ $this->tracking_shipper ]['url'] . $this->tracking_number ) . '" rel="nofollow" target="_blank">' . esc_html__( 'here', 'service-pack-for-storefront' ) . '</a>.' );
         $loop .= '</li>';
 
         echo apply_filters( 'spfs_order_tracking_frontend_loop', $loop );
 		  }
     }
     $orders = ob_get_clean();
-    if ( ! $orders ) return;
-    echo '<h2>' . esc_html__( 'My trackings', 'spfs' ) . '</h2>';
+    
+    if ( ! $orders ) {
+      return;
+    }
+    echo '<h2>' . esc_html__( 'My trackings', 'service-pack-for-storefront' ) . '</h2>';
     echo '<ul>';
     echo $orders;
     echo '</ul>';
 	}
   	
+  /**
+   * Get the customer orders.
+   *
+   * @return array The customer orders.
+   */
   private function get_customer_post_orders() {
 		$user = wp_get_current_user();
 		$args = array(
@@ -204,6 +294,15 @@ class SPFS_Order_Tracking {
 		return get_posts( $args );
   }
 
+  /**
+   * Hide 'spfs_order_tracking_*' custom fields.
+   *
+   * Hooked into 'is_protected_meta' action.
+   *
+   * @param  bool $protected
+   * @param  int $meta_key
+   * @return bool
+   */
   public function hide( $protected, $meta_key ) {
     if ( 'spfs_order_tracking_shipper' === $meta_key || 'spfs_order_tracking_number' === $meta_key ) {
       return true;

@@ -1,9 +1,23 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+  exit; // Exit if accessed directly...
+}
 
+/*
+ * Dynamic Sidebar module
+ *
+ * @class    SPFS_Dynamic_Sidebar
+ * @since    0.0.1
+ * @package  SPFS/Modules
+ * @category Modules
+ * @author   Opportus
+ */
 class SPFS_Dynamic_Sidebar {
 
+  /**
+   * Dynamic Sidebar module constructor.
+   */
   public function __construct() {
     add_action( 'init', array( $this, 'storefront_remove_sidebar' ) );
     add_action( 'widgets_init', array( $this, 'register_sidebars' ) );
@@ -11,10 +25,20 @@ class SPFS_Dynamic_Sidebar {
     add_action( 'storefront_footer', array( $this, 'top_footer_template' ), 5 );
   }
 
+  /**
+   * Remove original Storefront sidebar.
+   *
+   * Hooked into 'init' action.
+   */
   public function storefront_remove_sidebar() {
     remove_action( 'storefront_sidebar', 'storefront_get_sidebar', 10 );
   }
 
+  /**
+   * Dynamic Sidebar template.
+   *
+   * Hooked into 'storefront_sidebar' action.
+   */
   public function sidebar_template() {
     $sidebar = null;
 
@@ -51,13 +75,19 @@ class SPFS_Dynamic_Sidebar {
     dynamic_sidebar( $sidebar );
     echo '</div>';
   }
-  
+
+  /**
+   * Top Footer sidebar template.
+   *
+   * Hooked into 'storefront_footer' action.
+   */
   public function top_footer_template() {
     $rows = apply_filters( 'spfs_dynamic_sidebar_top_footer_template_rows', 2 );
-    $r = 0;
+    $r    = 0;
     
     while ( $r < $rows ) {
       $r++;
+      
       if ( is_active_sidebar( 'top-footer-' . $r . '-2' ) ) {
 			  $columns = 2;
 		  } elseif ( is_active_sidebar( 'top-footer-' . $r . '-1' ) ) {
@@ -67,12 +97,13 @@ class SPFS_Dynamic_Sidebar {
       }
       apply_filters( 'spfs_dynamic_sidebar_top_footer_template_columns', $columns );
 
-      if ( $columns > 0 ) {
+      if ( 0 < $columns ) {
         echo '<div class="footer-widgets col-' . intval( $columns ) . ' top-footer row-' . intval( $r ) . ' fix">';
         $c = 0;
         
         while ( $c < $columns ) {
           $c++;
+      
           if ( is_active_sidebar( 'top-footer-' . $r . '-' . $c ) ) {
             echo '<section class="block footer-widget-' . intval( $c ) . '">';
 					  dynamic_sidebar( 'top-footer-' . intval( $r ) . '-' . intval( $c ) );
@@ -84,6 +115,11 @@ class SPFS_Dynamic_Sidebar {
 	  }
   }
 
+  /**
+   * Register sidebars.
+   *
+   * Hooked into 'widgets_init' action.
+   */
   public function register_sidebars() {
     $sidebars = array(
       array(

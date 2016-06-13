@@ -1,19 +1,45 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+  exit; // Exit if accessed directly...
+}
 
+/**
+ * Facebook Page Widget.
+ *
+ * @class    SPFS_Widget_Facebook_Page
+ * @since    0.0.1
+ * @package  SPFS/Widgets
+ * @category Widgets
+ * @author   Opportus
+ */
 class SPFS_Widget_Facebook_Page extends WP_Widget {
 
+  /**
+   * Facebook Page Widget constructor.
+   */
   public function __construct() {
     parent::__construct( 'spfs_widget_facebook_page', 'Facebook Page', array( 'description' => 'Facebook Page Widget' ) );
   }
-	
+
+  /**
+   * Facebook Page Widget form.
+   *
+   * @param array $instance
+   */
 	public function form( $instance ) {
     $title = isset( $instance['title'] ) ? $instance['title'] : '';
-		echo '<p><label for="' . esc_attr( $this->get_field_name( 'title' ) ) . '">' . esc_html__( 'Title:' ) . '</label>';
+    
+    echo '<p><label for="' . esc_attr( $this->get_field_name( 'title' ) ) . '">' . esc_html__( 'Title:' ) . '</label>';
 		echo '<input class="widefat" id="' . esc_attr( $this->get_field_id( 'title' ) ) . '" name="' . esc_attr( $this->get_field_name( 'title' ) ) . '" type="text" value="' . esc_attr( $title ) . '" /></p>';
 	}
-	
+
+  /**
+   * Facebook Page Widget template.
+   *
+   * @param array $args
+   * @param array $instance
+   */
   public function widget( $args, $instance ) {
     $options  = get_option( 'spfs_settings' );
     $page_url = isset( $options['social_network']['facebook'] ) ? $options['social_network']['facebook'] : 'https://www.facebook.com/facebook';
@@ -35,7 +61,10 @@ class SPFS_Widget_Facebook_Page extends WP_Widget {
 		
 		echo $args['after_widget'];
 	}
-	
+
+  /**
+   * Facebook Page Widget SDK.
+   */
 	public function include_sdk() { ?>
     <div id="fb-root"></div>
 		<script>

@@ -1,11 +1,23 @@
 <?php
 
 if ( ! defined( 'ABSPATH' ) ) {
-  exit;
+  exit; // Exit if accessed directly...
 }
 
+/**
+ * Slider Module.
+ *
+ * @class    SPFS_Slider
+ * @since    0.0.1
+ * @package  SPFS/Modules
+ * @category Modules
+ * @author   Opportus
+ */
 class SPFS_Slider {
 
+  /**
+   * @var array $slide_link_box
+   */
   private $slide_link_box = array( 
 	  'id'              => 'spfs_slide_link',
 	  'title'           => 'Slide Link',
@@ -25,6 +37,10 @@ class SPFS_Slider {
 	  ),
   );
 
+
+  /**
+   * Slider Module constructor.
+   */
   public function __construct() {
     add_shortcode( 'spfs_slider', array( $this, 'shortcode' ) );
     add_action( 'init', array( $this, 'register_slide_post_type' ) );
@@ -34,6 +50,11 @@ class SPFS_Slider {
     add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
   }
 
+  /**
+   * Slider Module scripts.
+   *
+   * Hooked into 'wp_enqueue_scripts' action.
+   */
   public function enqueue_scripts() {
     if ( is_front_page() || SPFS::get_instance()->page_has_shortcode( 'spfs_slider' ) ) {
       wp_register_style( 'spfs-slider-style', SPFS_URL . 'assets/css/slider.min.css' );
@@ -44,7 +65,14 @@ class SPFS_Slider {
 		  wp_enqueue_script( 'spfs-slider-script' );
     }
   }
-  
+
+  /**
+   * Slider Module shortcode.
+   *
+   * Hooked into 'spfs_slider' action.
+   *
+   * @return string $slider
+   */
   public function shortcode() {
     ob_start();
 	  $this->template();
@@ -52,7 +80,12 @@ class SPFS_Slider {
     
     return $slider;
   }
-  
+
+  /**
+   * Register slide post type.
+   *
+   * Hooked into 'init' action.
+   */
   public function register_slide_post_type() {
     $labels = array(
 		  'name'              => _x( 'Slides', 'post type general name', 'service-pack-for-storefront' ),
@@ -89,6 +122,11 @@ class SPFS_Slider {
     register_post_type( 'spfs_slide', $post_type_args );
   }
 
+  /**
+   * Add admin meta box.
+   *
+   * Hooked into 'add_meta_boxes_spfs_slide' action.
+   */
   public function add_meta_boxes() {
     foreach ( $this->slide_link_box['page'] as $page ) {
       add_meta_box(
@@ -102,23 +140,39 @@ class SPFS_Slider {
     }
   }
 
+  /**
+   * Meta box template.
+   *
+   * @param object $post
+   */
   public function meta_box( $post )  {
     echo '<table class="form-table">';
+    
     foreach ( $this->slide_link_box['fields'] as $field ) {
       $meta = get_post_meta( $post->ID, $field['id'], true );
+      
       echo '<tr>';
       echo '<th style="width:20%"><label for="' . esc_attr( $field['id'] ) . '">' . esc_html( $field['name'] ) . '</label></th>';
-		  echo '<td class="field_type_' . esc_attr( str_replace( ' ', '_', $field['type'] ) ) . '">';
-      if ( $field['type'] === 'text' ) {
+      echo '<td class="field_type_' . esc_attr( str_replace( ' ', '_', $field['type'] ) ) . '">';
+
+      if ( 'text' === $field['type'] ) {
 				echo '<input type="text" name="' . esc_attr( $field['id'] ) . '" id="' . esc_attr( $field['id'] ) . '" value="' . esc_attr( $meta ) . '" size="30" style="width:97%" /><br />' . esc_html( $field['desc'] );
 		  }
       echo '</td>';
       echo '</tr>';
 	  }
     echo '</table>';
+    
     wp_nonce_field( 'spfs_slide_link_box_name', 'security' );
   }
 
+  /**
+   * Save slider.
+   *
+   * Hooked into 'save_post' action.
+   *
+   * @param int $post_id
+   */
   public function save( $post_id ) {
 		if ( isset( $_POST['spfs_slide_link_box_nonce'] ) && ! wp_verify_nonce( $_POST['spfs_slide_link_box_nonce'], 'security' ) ) {
 		  return $post_id;
@@ -136,9 +190,9 @@ class SPFS_Slider {
 	  }
     foreach ( $this->slide_link_box['fields'] as $field ) {
 		  $old = get_post_meta( $post_id, $field['id'], true );
-		  $new = isset( $_POST[$field['id']] ) ? sanitize_text_field( $_POST[$field['id']] ) : '';
+		  $new = isset( $_POST[ $field['id'] ] ) ? sanitize_text_field( $_POST[ $field['id'] ] ) : '';
       if ( $new && $new != $old ) {
-				if ( $field['type'] == 'date' ) {
+				if ( 'date' == $field['type'] ) {
 					$new = format_date( $new );
 					update_post_meta( $post_id, $field['id'], $new );
 				}
@@ -154,7 +208,12 @@ class SPFS_Slider {
 		  }
 	  } 
   }
-  
+
+  /**
+   * Slider template.
+   *
+   * Hooked into 'woocommerce_before_main_content' action.
+   */
   public function template() {
     if ( ! is_front_page() && ! SPFS::get_instance()->page_has_shortcode( 'spfs_slider' ) ) {
       return;
@@ -173,12 +232,12 @@ class SPFS_Slider {
         $query->the_post();
         echo '<li>';
         
-        if ( get_post_meta( get_the_id(), 'spfs_slide_url', true) != '' ) {
+        if ( '' != get_post_meta( get_the_id(), 'spfs_slide_url', true) ) {
           echo '<a href="' . esc_url( get_post_meta( get_the_id(), 'spfs_slide_url', true ) ) . '">';
 			  }
         echo the_post_thumbnail();
         
-        if ( get_post_meta( get_the_id(), 'spfs_slide_url', true ) != '' ) {
+        if ( '' != get_post_meta( get_the_id(), 'spfs_slide_url', true ) ) {
           echo '</a>';
         }
         echo '</li>';

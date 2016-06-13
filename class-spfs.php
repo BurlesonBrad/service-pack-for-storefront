@@ -1,31 +1,42 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+  exit; // Exit if accessed directly...
+}
 
 /**
- * Main plugin class.
- * Init all functionalities and options.
- * Include extra methods used across the plugin.
+ * Main plugin class
+ * 
+ * Initialize all functionalities/modules and options...
+ * Include also methods used across the plugin.
+ * 
+ * @class    SPFS
+ * @since    0.0.1
+ * @package  SPFS
+ * @category Core
+ * @author   Opportus
  */
 class SPFS {
 
   /**
-   * Singleton self instance.
+   * @var object $instance Plugin's singleton self instance.
    */
   private static $instance;
 
   /**
-   * Plugin's settings object.
+   * @var object $settings Plugin's singleton admin settings instance.
    */
   private $settings;
 
   /**
-   * Store the current page content.
+   * @var object $page_content Store the current page content.
    */
-  private $page_content = null;
+  private $page_content;
 
   /**
-   * Return the singleton instance.
+   * Get SPFS instance.
+   *
+   * @return odject $instance Return SPFS singleton self instance.
    */
   public static function get_instance() {
     if ( is_null( self::$instance ) ) {
@@ -34,6 +45,9 @@ class SPFS {
     return self::$instance;
   }
 
+  /**
+   * Initialize everything...
+   */
   private function __construct() {
     $this->init_settings();
     $this->init_options();
@@ -42,25 +56,28 @@ class SPFS {
     $this->init_actions();
   }
 
+  /**
+   * Initialize plugin's settings.
+   */
   private function init_settings() {
     include_once( SPFS_DIR . 'admin/class-spfs-settings.php' );
     $this->settings = SPFS_Settings::get_instance();
   }
 
   /**
-   * Initialize/Update plugin options.
+   * Initialize/Update plugin's options.
    */
   private function init_options() {
     $options = get_option( 'spfs_settings' );
     
     if ( $options ) {
       foreach ( $this->settings->get_settings_fields() as $field => $setting ) {
-        // Check if the module requires Storefront or WooCommerce.
+        // Check if the current module requires Storefront or WooCommerce.
         if ( isset( $setting['require'] ) ) {
           // If the module's dependency (Storefront or WooCommerce) is not activated...
           if ( $this->is_missing_dependency( $setting['require'] ) ) {
             // Set the option 'modules_activation' to 0, so the module won't be activated by init_modules() method.
-            $options['modules_activation'][$field] = 0;
+            $options['modules_activation'][ $field ] = 0;
             update_option( 'spfs_settings', $options );
           }
         }
@@ -69,28 +86,29 @@ class SPFS {
     // In the case of, say, the plugin activation, the plugin's options are not set yet. So let's set them...
     elseif ( ! $options ) {
       $options = array();
-      // Structure an array of 2 dimensions which will be serialized in wp_options table...
+      // Structure an array of 2 dimensions which will be serialized in wp_options table ("spfs_settings" row)...
       foreach ( $this->settings->get_settings_fields() as $field => $setting ) {
+        // Remove section prefix "spfs_settings_"...
         $section = substr( $setting['section'], 14 );
-        if ( $section === 'modules_activation' ) {
+        if ( 'modules_activation' === $section ) {
           // Check if the module requires Storefront or WooCommerce.
           if ( isset( $setting['require'] ) ) {
             // By default, deactivate modules which have missing dependencies (Storefront or WooCommerce).
             if ( $this->is_missing_dependency( $setting['require'] ) ) {
-              $options[$section][$field] = 0;
+              $options[ $section ][ $field ] = 0;
             }
             else {
-              $options[$section][$field] = 1;
+              $options[ $section ][ $field ] = 1;
             }
           }
           // Activate modules in any other case.
           else {
-            $options[$section][$field] = 1;
+            $options[ $section ][ $field ] = 1;
           }
         }
         // Set to null other options.
         else {
-          $options[$section][$field] = null;
+          $options[ $section ][ $field ] = null;
         }
       }
       add_option( 'spfs_settings', $options );
@@ -98,7 +116,7 @@ class SPFS {
   }
 
   /**
-   * Initialize the plugin modules depending on the 'modules_activation' option value.
+   * Initialize the plugin's modules if the 'modules_activation' option value is 1.
    */
   private function init_modules() {
     $options = get_option( 'spfs_settings' );
@@ -114,10 +132,18 @@ class SPFS {
     }
   }
 
+  /**
+   * Initialize plugin's widgets.
+   */
   private function init_widgets() {
     add_action( 'widgets_init', array( $this, 'register_widgets' ) );
   }
 
+  /**
+   * Register plugin's widgets...
+   *
+   * Hooked into 'widget_init' action.
+   */
   public function register_widgets() {
     include_once( SPFS_DIR . 'widgets/class-spfs-widget-facebook-page.php' );
     include_once( SPFS_DIR . 'widgets/class-spfs-widget-newsletter.php' );
@@ -127,13 +153,25 @@ class SPFS {
     register_widget( 'SPFS_Widget_Social_Link' );
   }
 
+  /**
+   * Initialize plugin's actions.
+   */
   private function init_actions() {
+    // Get the current page content.
     add_action( 'the_posts', array( $this, 'set_page_content' ) );
   }
 
+  //________________________________________________________
+  //                                                        |
+  //                                                        |
+  // From here we include methods used across the plugin... |
+  //                                                        |
+  //________________________________________________________|
+  
   /**
-   * Init Database...
-   * Hooked to 'register_activation_hook' action.
+   * Initialize Database...
+   * 
+   * Hooked into 'register_activation_hook' action.
    */
   public function init_db() {
     global $wpdb;
@@ -142,8 +180,11 @@ class SPFS {
 
   /**
    * Clean Database...
-   * Hooked to 'register_deactivation_hook' action for testing purposes.
-   * Will be hooked to 'register_uninstall_hook' action later.
+   * 
+   * Hooked into 'register_deactivation_hook' action for testing purposes.
+   *
+   * @todo Will be hooked to 'register_uninstall_hook' action later.
+   * @todo Delete 'Tracking Order' module  meta from orders.
    */
   public function clean_db() {
     global $wpdb;
@@ -154,19 +195,15 @@ class SPFS {
       $wpdb->query( "DROP TABLE {$wpdb->prefix}spfs_email_list" );
     }
     delete_option( 'spfs_settings' );
-
-    // TODO: delete order post meta from the "Tracking Order" module...
   }
 
   /**
-   * Misc methods used across the plugin...
-   *
-   *
-   */
-
-  /**
    * Get the current page content.
+   *
    * Apply filter to it and store it in $this->page_content.
+   *
+   * @param  object $posts
+   * @return object $posts
    */
   public function set_page_content( $posts ) {
     apply_filters( 'spfs_page_content', $posts );
@@ -176,7 +213,9 @@ class SPFS {
   }
 
   /**
-   * Get the current page content.
+   * Get the current page content property.
+   *
+   * @return object SPFS::$page_content
    */
   public function get_page_content() {
     if ( isset( $this->page_content ) ) {
@@ -186,6 +225,9 @@ class SPFS {
 
   /**
    * Return true if the current page content has a shortcode named $shortcode. Otherwise, return false.
+   *
+   * @param  string $shortcode The shortcode slug.
+   * @return bool true if the current page content include a $shortcode, false otherwise.
    */
   public function page_has_shortcode( $shortcode ) {
     if ( ! shortcode_exists( $shortcode ) || empty( $this->page_content ) ) {
@@ -202,7 +244,10 @@ class SPFS {
   }
 
   /**
-   * Return false if the passed $dependency is not activated. Otherwise, return true.
+   * Test if the param $dependency is not activated...
+   *
+   * @param  string $dependency 'woocommerce' or 'storefront'
+   * @return bool true if $dependency is not activated, false otherwise.
    */
   public function is_missing_dependency( $dependency ) {
     if ( ! $dependency ) return false;

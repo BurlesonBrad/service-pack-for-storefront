@@ -1,13 +1,40 @@
 <?php
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+if ( ! defined( 'ABSPATH' ) ) {
+  exit; // Exit if accessed directly...
+}
 
+/**
+ * Plugin's admin settings class.
+ *
+ * @class    SPFS_Settings
+ * @since    0.0.1
+ * @package  SPFS/Admin
+ * @category Admin
+ * @author   Opportus
+ */
 class SPFS_Settings {
 
+  /**
+   * @var odject $instance Singleton SPFS_Settings instance.
+   */
   private static $instance;
+
+  /**
+   * @var array $settings_fields Store the settings fields.
+   */
   private $settings_fields;
+
+  /**
+   * @var array $settings_sections Store the settings sections.
+   */
   private $settings_sections;
 
+  /**
+   * Initialize singleton self instance.
+   *
+   * @return object SPFS_Settings::$instance
+   */
   public static function get_instance() {
     if ( is_null( self::$instance ) ) {
       self::$instance = new SPFS_Settings();
@@ -15,14 +42,29 @@ class SPFS_Settings {
     return self::$instance;
   }
 
+  /**
+   * Get settings fields.
+   *
+   * @return array SPFS::$settings_fields
+   */
   public function get_settings_fields() {
     return $this->settings_fields;
   }
-  
+
+  /**
+   * Get settings sections.
+   *
+   * @return array SPFS::$settings_sections
+   */
   public function get_settings_sections() {
     return $this->settings_sections;
   }
-  
+
+  /**
+   * Plugin's admin settings constructor.
+   *
+   * Initialize settings fields, sections and page.
+   */
   private function __construct() {
     $this->set_settings_fields();
     $this->set_settings_sections();
@@ -31,7 +73,12 @@ class SPFS_Settings {
     add_action( 'admin_init', array( $this, 'init_settings_fields' ) );
   }
 
-  private function set_settings_fields( $dynamic_fields = false ) {
+  /**
+   * Set the settings fields.
+   *
+   * @param mixed false|array $additional_settings_fields (default: false)
+   */
+  private function set_settings_fields( $additional_settings_fields = false ) {
     $settings_fields = array(
       'aggregator'     => array(
         'name'         => __( 'Aggregator', 'service-pack-for-storefront' ),
@@ -155,13 +202,18 @@ class SPFS_Settings {
       )
     );
     if ( is_null( $this->settings_fields ) ) {
-      return $this->settings_fields = $settings_fields;
+      $this->settings_fields = $settings_fields;
     }
-    elseif ( $dynamic_fields ) {
-      return $this->settings_fields += $dynamic_fields;
+    // If this method has been called with additional settings fields as argument...
+    elseif ( $additional_settings_fields ) {
+      // Merge settings fields.
+      $this->settings_fields += $additional_settings_fields;
     }
   }
 
+  /**
+   * Set the settings sections.
+   */
   private function set_settings_sections() {
     $settings_sections = array(
       'modules_activation' => array(
@@ -184,10 +236,15 @@ class SPFS_Settings {
       )
     );
     if ( is_null( $this->settings_sections ) ) {
-      return $this->settings_sections = $settings_sections;
+      $this->settings_sections = $settings_sections;
     }
   }
- 
+
+  /**
+   * Initialize plugin's options page.
+   *
+   * Hooked into 'admin_menu' action.
+   */
   public function init_options_page() {
     add_options_page(
       __( 'Service Pack for Storefront', 'service-pack-for-storefront' ),
@@ -198,10 +255,18 @@ class SPFS_Settings {
     );
   }
 
+  /**
+   * Initialize option page's settings sections.
+   *
+   * Hooked into 'admin_init' action.
+   */
   public function init_settings_sections() {
+    // Get the options from wp_options database table.
     $options = get_option( 'spfs_settings' );
+
     foreach ( $this->settings_sections as $section => $setting ) {
-      if ( ! isset( $setting['modulable'] ) || isset( $setting['modulable'] ) && isset( $options['modules_activation'][$setting['modulable']] ) ) {
+      // Add the section if it doesn't concern a particular module OR if this module is activated.
+      if ( ! isset( $setting['modulable'] ) || isset( $setting['modulable'] ) && isset( $options['modules_activation'][ $setting['modulable'] ] ) ) {
         add_settings_section(
           'spfs_settings' . '_' . $section,
           $setting['name'],
@@ -212,45 +277,67 @@ class SPFS_Settings {
     }
   }
 
+  /**
+   * Initialize options page's fields.
+   *
+   * Hooked into 'admin_init' action.
+   */
   public function init_settings_fields() {
     register_setting(
       'spfs_settings_group',
       'spfs_settings',
       array( $this, 'sanitization' )
     );
+    // Get the options from wp_options database table.
     $options = get_option( 'spfs_settings' );
-    // Add dynamically new pair of setting fields for the 'order_tracking' option group
+    
+    // Let's add dynamically new pair of settings fields for the 'order_tracking' settings section...
     if ( isset( $options['order_tracking'] ) ) {
+      // Grep 'shipper_name' fields in options.
       $shippers = preg_grep( '#^shipper_name#', array_keys( $options['order_tracking'] ) );
-      $shipper_number = 0;
+      $shippers_number = 0;
+
       foreach( $shippers as $shipper ) {
-        if ( ! is_null( $options['order_tracking'][$shipper] ) ) {
-          $shipper_number ++;
+        // If 'shipper_name' value is not null...
+        if ( ! is_null( $options['order_tracking'][ $shipper ] ) ) {
+          // Count one more shipper.
+          $shippers_number ++;
         }
       }
-      if ( $shipper_number ) {
+      // If at least 1 shipper has been set, let's add new 'shipper_name' and 'shipper_url' setting fields pair...
+      if ( $shippers_number ) {
+        // We count the original shipper's setting fields pair which has the ID '_0'.
+        // The $field_number variable will also define the new shipper's setting fields pair ID...
         $field_number = 1;
-        while ( $field_number <= $shipper_number ) {
+
+        while ( $field_number <= $shippers_number ) {
+          // Create new shipper's setting fields pair with their new ID ($field_number)...
           $new_fields = array(
             'shipper_name_' . $field_number => $this->settings_fields['shipper_name_0'],
             'shipper_url_' . $field_number  => $this->settings_fields['shipper_url_0']
           );
+          // Add them to the existing settings fields.
           $this->set_settings_fields( $new_fields );
           $field_number ++;
         }
       }
     }
+
+    // Now, let's add the settings fields.
     foreach ( $this->settings_fields as $field => $setting ) {
-      // Add the field if it doesn't concern a particular module OR if this module is activated
-      if ( ! isset( $setting['modulable'] ) || isset( $setting['modulable'] ) && isset( $options['modules_activation'][$setting['modulable']] ) ) {
+      // Add the field if it doesn't concern a particular module OR if this module is activated.
+      if ( ! isset( $setting['modulable'] ) || isset( $setting['modulable'] ) && isset( $options['modules_activation'][ $setting['modulable'] ] ) ) {
+        // Remove section prefix 'spfs_settings_' from the setting section...
         $section = substr( $setting['section'], 14 );
-        $value = isset( $options[$section][$field] ) ? $options[$section][$field] : null;
+        // Get the option value for displaying it in field template.
+        $value = isset( $options[ $section ][ $field ] ) ? $options[ $section ][ $field ] : null;
         add_settings_field(
           $slug = $setting['section'] . '_' . $field,
           $setting['name'],
           array( $this, 'settings_fields_template' ),
           'spfs_settings_page',
           $setting['section'],
+          // Send this array as argument to the settings_fields_template method.
           array(
           'section'   => $section,
           'field'     => $field,
@@ -265,45 +352,86 @@ class SPFS_Settings {
     }
   }
 
+  /**
+   * Setting's sanitization callback.
+   *
+   * Validate $spfs_settings array keys and values and sanitize fields values.
+   * $spfs_settings is an two-dimensional array sructured this way:
+   * $spfs_settings[ $section ][ $field ]
+   *
+   * @param  array $input SPFS admin settings.
+   * @return array $output Valid/Sanitized SPFS admin settings.
+   * @todo   Test it.
+   */
   public function sanitization( $input ) {
-    foreach ( $input as $section => $fields ) {
-      if ( ! isset( $this->settings_sections[$section] ) ) {
+    foreach ( $input as $section => $value ) {
+      // Check if the '$spfs_settings[ $section ]' key exists in $this->settings_sections...
+      if ( ! isset( $this->settings_sections[ $section ] ) ) {
+        // If not, return without saving the settings fields values.
         return;
       }
-      foreach ( $fields as $field => $setting ) {
-        if ( ! isset( $this->settings_fields[$field] ) ) {
-          // Try to get the base slug of dynamically added fields without the ID at the end, eg: shipper_name_1, shipper_url_1, etc...
+    }
+    foreach ( $input as $section => $fields ) {
+      foreach ( $fields as $field => $value ) {
+        // Check if the '$spfs_settings[ $section ][ $field ]' key exists in $this->settings_fields...
+        if ( ! isset( $this->settings_fields[ $field ] ) ) {
+          // If $field is not a known setting field slug, maybe it's because it's an additional field.
+          // For reminding, additional fields can be added by $this->init_settings_fields()... For more info, refer to it.
+          // So let's try to get the base slug of the field without the ID at the end...
+          // Eg: 'shipper_name_1' would become 'shipper_name'.
+          // On which we add '_0' to compare next to the original setting field.
           $key = substr( $field, 0, -2 ) . '_0';
-          // TODO test it...
-          if ( empty( array_keys( $this->settings_fields, $key ) ) ) {
+          // If the field slug key doesn't exist in $this->settings_fields...
+          if ( ! isset( $this->settings_fields[ $key ] ) ) {
+            // Return without saving any field values.
             return;
           }
         }
-        if ( ! empty( $setting ) ) {
-          $output[$section][$field] = sanitize_text_field( stripslashes( $setting ) );
+        // Now that we know all '$spfs_settings' keys are valid, let's focus on settings values...
+        if ( ! empty( $value ) ) {
+          // Validate and sanitize the value.
+          $output[ $section ][ $field ] = sanitize_text_field( stripslashes( $value ) );
         }
         else {
-          $output[$section][$field] = null;
+          // Set the value to null.
+          $output[ $section ][ $field ] = null;
         }
       }
     }
+    // Return the valid and sanitized settings.
     return $output;
   }
 
+  /**
+   * Plugin's settings page template.
+   */
   public function settings_page_template() {
     echo '<h1>' . esc_html__( 'Service Pack for Storefront', 'service-pack-for-storefront' ) . '</h1>';
     echo '<form method="POST" action="options.php">';
+    
     do_settings_sections( 'spfs_settings_page' );
     submit_button();
     settings_fields( 'spfs_settings_group' );
+    
     echo '</form>';
   }
 
-  public function settings_sections_template( $args ) {
+  /**
+   * Plugin's settings sections template.
+   *
+   * @param array $args From 'add_settings_section()'.
+   */
+  public function settings_sections_template( $args ) { 
+    // Remove section prefix 'spfs_settings_'...
     $section = substr( $args['id'], 14 );
-    echo '<p>' . $this->settings_sections[$section]['description'] . '</p>';
+    echo '<p>' . $this->settings_sections[ $section ]['description'] . '</p>';
   }
 
+  /**
+   * Plugin's settings fields template.
+   *
+   * @param array $args From 'add_settings_field()'.
+   */
   public function settings_fields_template( $args ) {
     $missing_dependency = SPFS::get_instance()->is_missing_dependency( $args['require'] );
     $section            = $args['section'];
@@ -314,23 +442,26 @@ class SPFS_Settings {
     $require            = $args['require'] ? ucfirst( $args['require'] ) : false;
     $readonly           = $missing_dependency ? 'readonly onclick="return false"' : '';
     $value              = $missing_dependency ? 0 : $args['value'];
-    $description        = isset( $this->settings_fields[$field]['description'] ) ? $this->settings_fields[$field]['description'] : false;
+    $description        = isset( $this->settings_fields[ $field ]['description'] ) ? $this->settings_fields[ $field ]['description'] : false;
 
-    if ( $type === 'checkbox' ) {
+    if ( 'checkbox' === $type ) {
       echo '<input type="hidden" name="' . $name . '" value="0">';
       echo '<input type="' . $type . '" id="' . $slug . '" name="' . $name . '" value="1" ' . checked( 1, $value, false ) . $readonly . ' />';
+      
       if ( ! empty( $description ) ) {
         echo '<label for="' . $slug . '">' . $description . $requirement = $require ? ' <strong>' . sprintf( __( 'Require %s.', 'service-pack-for-storefront' ), $require ) . '</strong>' : '' . '</label>';
       }
     }
-    elseif ( $type === 'text' ) {
+    elseif ( 'text' === $type ) {
       $special = null;
       $style   = '';
+
       if ( $section === 'order_tracking' && ! empty( $value ) ) {
         $special = true;
         $style = ' style="background-color: #f2f2f2"';
       }
       echo '<input type="' . $type . '" id="' . $slug . '" name="' . $name . '" value="' . esc_attr( $value ) . '" class="regular-text"' . $style . ' />';
+      
       if ( ! empty( $description ) && ! $special ) {
         echo '<p class="description">' . $description . '</p>';
       }
