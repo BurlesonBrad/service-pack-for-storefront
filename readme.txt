@@ -7,6 +7,7 @@ Tested up to: 4.5.2
 Stable tag: 0.1.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8R7Y9R2C79J8
 
 Service Pack for Storefront Beta adds modulable fundamental functionalities to
 your WooCommerce/Storefront eCommerce site.
@@ -14,7 +15,7 @@ your WooCommerce/Storefront eCommerce site.
 == Description ==
 Includes most of extra basic functionalities a e-commerce should have...
 
-Modules:
+**Modules:**
 
 - Aggregator
 - Contact Form
@@ -25,7 +26,7 @@ Modules:
 - Slider
 - Store Credits
 
-Widgets:
+**Widgets:**
 
 - Facebook Page Plugin
 - Newsletter Subscriber
