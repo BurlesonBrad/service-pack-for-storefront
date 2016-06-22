@@ -146,3 +146,7 @@ I share my work freely with you with real pleasure.
 But as you probably guess, the time I use for developing this plugin is the time I take on my little business and the time I could use being with my family or friends instead.
 So by advance, huge thanks to the understanding and kind persons who will decide to make a little donation, thanks whom I'll can use more time developing faster the plugin for you :)
 Thanks also to those who won't donate but simply appreciate my work !
+
+== Changelog ==
+**Version 0.1 Beta**
+- Initial release
