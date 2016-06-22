@@ -171,10 +171,11 @@ class SPFS_Aggregator {
 						echo '</a>';
 						echo '</li>';
           }
-          if ( 1 === $reviews_counter ) {
-            echo '</ul>';
-          }
 					wp_reset_postdata();
+        }
+
+        if ( 0 < $reviews_counter ) {
+          echo '</ul>';
         }
         $loop = ob_get_clean();
         
