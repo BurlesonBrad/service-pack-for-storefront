@@ -192,7 +192,7 @@ class SPFS_Aggregator {
   private function rating_template( $product ) { 
 		$rating = $product->get_average_rating(); ?>
     
-    <div class="spfs-aggregator-rating" title="<?php echo sprintf( esc_attr__( 'Rated %s out of 5', 'woocommerce' ), esc_attr( $rating )  ); ?>" itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+    <div class="spfs-aggregator-rating star-rating" title="<?php echo sprintf( esc_attr__( 'Rated %s out of 5', 'woocommerce' ), esc_attr( $rating )  ); ?>" itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
 			<span style="width: <?php echo ( ( $rating / 5 ) * 100 ); ?>%"><strong class="rating" itemprop="ratingValue"><?php echo esc_html( $rating ); ?></strong> <?php esc_html_e( 'out of 5', 'woocommerce' ); ?></span>
 		</div><?php
 	}
