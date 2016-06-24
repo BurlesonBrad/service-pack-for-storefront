@@ -146,7 +146,7 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Top footer row-1 column-1', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<h3 class="widget-title">',
+		    'before_title'	=> '<h3>',
 		    'after_title' 	=> '</h3>'
 	    ),
       array(
@@ -155,7 +155,7 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Top footer row-1 column-2', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<h3 class="widget-title">',
+		    'before_title'	=> '<h3>',
 		    'after_title' 	=> '</h3>'
 	    ),
       array(
@@ -164,7 +164,7 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Top footer row-2 column-1', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<h3 class="widget-title">',
+		    'before_title'	=> '<h3>',
 		    'after_title' 	=> '</h3>'
 	    ),
       array(
@@ -173,7 +173,7 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Top footer row-2 column-2', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<h3 class="widget-title">',
+		    'before_title'	=> '<h3>',
 		    'after_title' 	=> '</h3>'
 	    )
     );
