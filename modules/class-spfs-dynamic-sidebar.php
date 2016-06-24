@@ -128,8 +128,8 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Sidebar displaying on your blog.', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p class="widget-title">',
-		    'after_title' 	=> '</p>'
+		    'before_title'	=> '<h3 class="widget-title">',
+		    'after_title' 	=> '</h3>'
 	    ),
       array(
 		    'name'					=> __( 'Page Sidebar', 'service-pack-for-storefront' ),
@@ -137,8 +137,8 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Sidebar displaying on single pages.', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p class="widget-title">',
-		    'after_title' 	=> '</p>'
+		    'before_title'	=> '<h3 class="widget-title">',
+		    'after_title' 	=> '</h3>'
 	    ),
       array(
 		    'name'					=> __( 'Top Footer 1', 'service-pack-for-storefront' ),
@@ -146,8 +146,8 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Top footer row-1 column-1', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p class="widget-title">',
-		    'after_title' 	=> '</p>'
+		    'before_title'	=> '<h3 class="widget-title">',
+		    'after_title' 	=> '</h3>'
 	    ),
       array(
 		    'name'					=> __( 'Top Footer 2', 'service-pack-for-storefront' ),
@@ -155,8 +155,8 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Top footer row-1 column-2', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p>',
-		    'after_title' 	=> '</p>'
+		    'before_title'	=> '<h3 class="widget-title">',
+		    'after_title' 	=> '</h3>'
 	    ),
       array(
 		    'name'					=> __( 'Top Footer 3', 'service-pack-for-storefront' ),
@@ -164,8 +164,8 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Top footer row-2 column-1', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p>',
-		    'after_title' 	=> '</p>'
+		    'before_title'	=> '<h3 class="widget-title">',
+		    'after_title' 	=> '</h3>'
 	    ),
       array(
 		    'name'					=> __( 'Top Footer 4', 'service-pack-for-storefront' ),
@@ -173,8 +173,8 @@ class SPFS_Dynamic_Sidebar {
 		    'description' 	=> __( 'Top footer row-2 column-2', 'service-pack-for-storefront' ),
 		    'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		    'after_widget'	=> '</aside>',
-		    'before_title'	=> '<p>',
-		    'after_title' 	=> '</p>'
+		    'before_title'	=> '<h3 class="widget-title">',
+		    'after_title' 	=> '</h3>'
 	    )
     );
     if ( ! SPFS::get_instance()->is_missing_dependency( 'woocommerce' ) ) {
@@ -185,8 +185,8 @@ class SPFS_Dynamic_Sidebar {
 		      'description' 	=> __( 'Sidebar displaying on product categories.', 'service-pack-for-storefront' ),
 		      'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		      'after_widget'	=> '</aside>',
-		      'before_title'	=> '<p class="widget-title">',
-		      'after_title' 	=> '</p>'
+		      'before_title'	=> '<h3 class="widget-title">',
+		      'after_title' 	=> '</h3>'
 	      ),
         array(
 		      'name'					=> __( 'Product Sidebar', 'service-pack-for-storefront' ),
@@ -194,8 +194,8 @@ class SPFS_Dynamic_Sidebar {
 		      'description' 	=> __( 'Sidebar displaying on product page.', 'service-pack-for-storefront' ),
 		      'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		      'after_widget'	=> '</aside>',
-		      'before_title'	=> '<p class="widget-title">',
-		      'after_title' 	=> '</p>'
+		      'before_title'	=> '<h3 class="widget-title">',
+		      'after_title' 	=> '</h3>'
 	      ),
         array(
 		      'name'					=> __( 'Special Sidebar', 'service-pack-for-storefront' ),
@@ -203,8 +203,8 @@ class SPFS_Dynamic_Sidebar {
 		      'description' 	=> __( 'Sidebar displaying on my account, checkout, and cart pages.', 'service-pack-for-storefront' ),
 		      'before_widget' => '<aside id="%1$s" class="widget %2$s">',
 		      'after_widget'	=> '</aside>',
-		      'before_title'	=> '<p class="widget-title">',
-		      'after_title' 	=> '</p>'
+		      'before_title'	=> '<h3 class="widget-title">',
+		      'after_title' 	=> '</h3>'
 	      )
       );
       $sidebars = array_merge( $sidebars_wc, $sidebars );
