@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Service Pack for Storefront
  * Description: Adds modulable functionalities and SEO improvements to your WooCommerce/Storefront site.
- * Version: 0.0.1
+ * Version: 0.1
  * Author: opportus
  * Text Domain: service-pack-for-storefront
  *
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define the plugin's constants.
  */
-define( 'SPFS_VERSION', '0.0.1' );
+define( 'SPFS_VERSION', '0.1.0' );
 define( 'SPFS_DIR', plugin_dir_path( __FILE__ ) . '/' );
 define( 'SPFS_URL', plugins_url( '/', __FILE__ ) );
 
