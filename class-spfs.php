@@ -160,6 +160,7 @@ class SPFS {
   private function init_actions() {
     // Get the current page content.
     add_action( 'the_posts', array( $this, 'set_page_content' ) );
+    add_action( 'admin_init', array( $this, 'reminder_admin_notice' ) );
   }
 
   /**
@@ -192,7 +193,7 @@ class SPFS {
    * Hooked into 'register_deactivation_hook' action for testing purposes.
    *
    * @todo Will be hooked to 'register_uninstall_hook' action later.
-   * @todo Delete 'Tracking Order' module  meta from orders.
+   * @todo Delete 'Tracking Order' module meta from orders.
    */
   public function clean_db() {
     global $wpdb;
@@ -203,6 +204,8 @@ class SPFS {
       $wpdb->query( "DROP TABLE {$wpdb->prefix}spfs_email_list" );
     }
     delete_option( 'spfs_settings' );
+
+    delete_transient( 'spfs_reminder_admin_notice_displayed' );
   }
 
   /**
@@ -220,6 +223,24 @@ class SPFS {
     return $posts;
   }
 
+  /**
+   * Reminder admin notice.
+   *
+   * Display it once at month.
+   * Hooked into 'admin_init' action.
+   */
+  public function reminder_admin_notice() {
+    if ( ! get_transient( 'spfs_reminder_admin_notice_displayed' ) ) {
+      echo '<div class="updated notice is-dismissible">';
+      echo '<p>' . sprintf( esc_html__( 'Thank you for using %s, hope you enjoy it !', 'service-pack-for-storefront' ), '<strong>Service Pack for Storefront</strong>' ) . '</p>';
+      echo '<p>' . sprintf( esc_html__( 'If you have a question, a suggestion, or if you need help, here is the %s.', 'service-pack-for-storefront' ), '<a href="https://wordpress.org/support/plugin/service-pack-for-storefront" target="_blank">' . esc_html__( 'support forum', 'service-pack-for-storefront' ) . '</a>' ) . '</p>';
+      echo '<p>' . sprintf( esc_html__( 'To allow me to spend more time developing this plugin for you, a little %s would be great !', 'service-pack-for-storefront' ), '<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8R7Y9R2C79J8" target="_blank">' . esc_html__( 'donation', 'service-pack-for-storefront' ) . '</a>'  ) . '</p>';
+      echo '</div>';
+      
+      set_transient( 'spfs_reminder_admin_notice_displayed', 1, 30 * DAY_IN_SECONDS );
+    }
+  }
+  
   /**
    * Get the current page content property.
    *
@@ -258,7 +279,9 @@ class SPFS {
    * @return bool true if $dependency is not activated, false otherwise.
    */
   public function is_missing_dependency( $dependency ) {
-    if ( ! $dependency ) return false;
+    if ( ! $dependency ) {
+      return false;
+    }
     elseif ( 'storefront' === $dependency ) {
       if ( 'storefront' === strtolower( wp_get_theme()->template ) ) {
         return false;
