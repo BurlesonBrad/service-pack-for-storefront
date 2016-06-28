@@ -54,6 +54,7 @@ class SPFS {
     $this->init_modules();
     $this->init_widgets();
     $this->init_actions();
+    $this->init_textdomain();
   }
 
   /**
@@ -159,6 +160,13 @@ class SPFS {
   private function init_actions() {
     // Get the current page content.
     add_action( 'the_posts', array( $this, 'set_page_content' ) );
+  }
+
+  /**
+   * Load plugin's text domain.
+   */
+  private function init_textdomain() {
+      load_plugin_textdomain( 'service-pack-for-storefront', false, 'service-pack-for-storefront/languages' );
   }
 
   //________________________________________________________
