@@ -5,7 +5,7 @@ shop, aggregator, contact-form, sidebar, floating-menu, order-tracking,
 sharer, slider, store-credit, facebook, newsletter, social-link
 Requires at least: 4.4
 Tested up to: 4.5.2
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8R7Y9R2C79J8
@@ -140,19 +140,41 @@ Though, the plugin can work "buglessly" without WooCommerce or Storefront, most 
 
 = Notes =
 
-This plugin is kinda new and is still in beta release but as far as I've tested it, it's bugless and safe to use for any site in production.
-If you find a bug, please report it on the [GitHub](https://github.com/opportus/service-pack-for-storefront "GitHub") repo.
+This plugin is kinda new and is still in beta release but as far as I daily use and test it, it's bugless and safe to use for any site in production.
+If you find a bug, please report it on the [GitHub](https://github.com/opportus/service-pack-for-storefront/issues "GitHub") repo.
 If you'd like to see a specific functionality added to the plugin, please let me know on the [support forum](https://wordpress.org/support/plugin/service-pack-for-storefront "support furom").
 Note also that this plugin or its author are in no way affiliated with WooThemes.
 
 = Donation =
 
 I share my work freely with you with real pleasure.
-But as you probably guess, the time I use for developing this plugin is the time I take on my little business and the time I could use being with my family or friends instead.
-So by advance, huge thanks to the understanding and kind people who will make a little donation, with whom I'll can use more time developing faster the plugin for you :)
+But as you probably guess, the time I use for developing this plugin is the time I take on my little business and the time I could spend with my family or friends instead.
+So by advance, huge thanks to the understanding and kind people who will make a little [donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8R7Y9R2C79J8 "Donate via PayPal"), with whom I'll can use more time developing faster the plugin for you :)
 Thanks also to those who won't donate but simply appreciate my work !
 
+== Screenshots ==
+
+1. Service Pack's Settings - Modules activation.
+2. Service Pack's Settings - Set here your social pages URLs and the store credit module options.
+3. Service Pack's Settings - Order tracking module options.
+4. Plugin's widgets and sidebars.
+5. Store Credit Module - Send store credits to your customers by email or create them in the "Coupon" section.
+6. Slider Module - Create/Edit slides.
+7. Order Tracking Module - Choose the shipper and enter the tracking number in the metabox.
+8. Aggregator Module - Display blog posts on the front page.
+9. Aggregator Module - Display product reviews on the product categories.
+10. Contact Form Module - Simple front-end contact form.
+11. Order Tracking Module - Display order tracking information on the WooCommerce "My Account" page.
+12. Sharer Module - Let your customers share products and posts on their social accounts.
+13. Slider Module - Simple responsive slider based on the WooTheme's "FlexSlider".
+
 == Changelog ==
+**Version 0.1.2 Beta**
+
+Enhancements:
+
+- Add admin notices on plugin's activation
+
 **Version 0.1.1 Beta**
 
 Enhancements:
