@@ -2,9 +2,11 @@
 
 /**
  * Plugin Name: Service Pack for Storefront
- * Description: Adds modulable functionalities and SEO improvements to your WooCommerce/Storefront site.
+ * Description: Adds modulable basic functionalities to your WooCommerce/Storefront site.
  * Version: 0.1
  * Author: opportus
+ * Requires at least: 4.4
+ * Tested up to 4.5.3
  * Text Domain: service-pack-for-storefront
  *
  * @category Core
