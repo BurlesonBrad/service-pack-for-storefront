@@ -49,12 +49,12 @@ class SPFS {
    * Initialize everything...
    */
   private function __construct() {
+    $this->init_textdomain();
     $this->init_settings();
     $this->init_options();
     $this->init_modules();
     $this->init_widgets();
     $this->init_actions();
-    $this->init_textdomain();
   }
 
   /**
