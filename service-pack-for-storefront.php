@@ -2,6 +2,7 @@
 
 /**
  * Plugin Name: Service Pack for Storefront
+ * Plugin URI: https://github.com/opportus/service-pack-for-storefront
  * Description: Adds modulable basic functionalities to your WooCommerce/Storefront site.
  * Version: 0.1
  * Author: opportus
