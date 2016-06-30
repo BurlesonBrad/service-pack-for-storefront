@@ -5,7 +5,7 @@ shop, aggregator, contact-form, sidebar, floating-menu, order-tracking,
 sharer, slider, store-credit, facebook, newsletter, social-link
 Requires at least: 4.4
 Tested up to: 4.5.2
-Stable tag: 0.1.3
+Stable tag: 0.1.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8R7Y9R2C79J8
@@ -169,6 +169,12 @@ Thanks also to those who won't donate but simply appreciate my work !
 13. Slider Module - Simple responsive slider based on the WooTheme's "FlexSlider".
 
 == Changelog ==
+**Version 0.1.4 Beta**
+
+Fix:
+
+- [Issue](https://github.com/opportus/service-pack-for-storefront/issues/5) with PHP versions lower than 5.5.16 which were not loading classes. Thanks [@huseyinduz](https://github.com/huseyinduz).
+
 **Version 0.1.3 Beta**
 
 Enhancements:
