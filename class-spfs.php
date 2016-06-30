@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Include also methods used across the plugin.
  * 
  * @class    SPFS
- * @since    0.0.1
+ * @since    0.1.4
  * @package  SPFS
  * @category Core
  * @author   Opportus
@@ -126,7 +126,21 @@ class SPFS {
     foreach ( $modules as $module => $activation ) {
       if ( $activation ) {
         include_once( SPFS_DIR . 'modules/class-spfs-' . str_replace( '_', '-', $module ) . '.php' );
-        $class = 'SPFS_' . ucwords( $module, '_' );
+
+        // Second parameter of ucwords() has been added in PHP version 5.5.16
+        // So if PHP version is equal or higher than 5.5.16...
+        if ( version_compare( PHP_VERSION, '5.5.16' ) >= 0 ) {
+          $class = 'SPFS_' . ucwords( $module, '_' );
+        }
+        // Or if it's lower...
+        else {
+          $strings = explode( '_', $module );
+
+          foreach ( $strings as $string ) {
+            $ucf_strings[] = ucfirst( $string );
+          }
+          $class = 'SPFS_' . implode( '_', $ucf_strings );
+        }
         
         new $class;
       }
