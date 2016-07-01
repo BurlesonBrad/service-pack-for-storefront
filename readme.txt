@@ -132,7 +132,7 @@ So instead to spend time to adapt plugins, I finally decided to write my owns, f
 **Compatibility**
 
 When you need a plugin from developer X working hand to hand with a plugin from developer Y, it can get somehow tricky.
-So as I see it, why not developing together all basic functionalities that a e-commerce should have anyway ? And what plugin a WordPress e-commerce should minimally have ?
+So as I see it, why not developing and packing together all basic functionalities that a e-commerce should have anyway ? And what plugin a WordPress e-commerce should minimally have ?
 
 - The awesome WooCommerce plugin and its official Storefront theme
 - A good SEO plugin
