@@ -128,20 +128,17 @@ class SPFS {
         include_once( SPFS_DIR . 'modules/class-spfs-' . str_replace( '_', '-', $module ) . '.php' );
 
         // Second parameter of ucwords() has been added in PHP version 5.5.16
+        //
         // So if PHP version is equal or higher than 5.5.16...
         if ( version_compare( PHP_VERSION, '5.5.16' ) >= 0 ) {
           $class = 'SPFS_' . ucwords( $module, '_' );
         }
         // Or if it's lower...
         else {
-          $strings = explode( '_', $module );
-
-          foreach ( $strings as $string ) {
-            $ucf_strings[] = ucfirst( $string );
-          }
-          $class = 'SPFS_' . implode( '_', $ucf_strings );
+          $class = str_replace( '_', ' ', $module );
+          $class = ucwords( $class );
+          $class = 'SPFS_' . str_replace( ' ', '_', $class );
         }
-        
         new $class;
       }
     }
