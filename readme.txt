@@ -3,7 +3,7 @@ Contributors: opportus
 Tags: woocommerce, storefront, starter-pack, ecommerce, e-commerce, store, shop, aggregator, contact-form, sidebar, floating-menu, order-tracking, sharer, slider, store-credit, facebook, newsletter, social-link
 Requires at least: 4.4
 Tested up to: 4.5.2
-Stable tag: 0.1.4
+Stable tag: 0.1.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8R7Y9R2C79J8
@@ -41,7 +41,7 @@ Requires Storefront Theme.
 = Contact Form =
 
 
-Simple front end contact form that you can include to your contact page with the [spfs_contact_form] short code.
+Simple front end contact form that you can include to your contact page with the [spfs_contact_form] short code. Uses AJAX submission.
 Note that a solution to join email attachment will be implemented soon.
 
 = Dynamic Sidebars =
@@ -106,7 +106,7 @@ A widget that easily allow users to like your Facebook page and see who else lik
 = Newsletter Subscriber =
 
 
-A widget in which your customers can enter their email address to be registered in your email list database.
+A widget in which your customers can enter their email address to be registered in your email list database. Use AJAX submission.
 Note that actually, it will do only this. A whole newsletter system module will be developed around it and will be included in futur releases.
 
 = Social Links =
@@ -194,6 +194,13 @@ Thanks also to those who won't donate but simply appreciate my work !
 13. Slider Module - Simple responsive slider based on the WooTheme's "FlexSlider".
 
 == Changelog ==
+**Version 0.1.5 Beta** - 03/07/2016
+
+- Enhancement - Improved newsletter subscriber widget notification
+- Enhancement - Improved contact form submission notification
+- Enhancement - GitHub [Issue #5](https://github.com/opportus/service-pack-for-storefront/issues/5)'s fix optimization
+- Fix - readme.txt
+
 **Version 0.1.4 Beta** - 30/06/2016
 
 - Fix - [Issue](https://github.com/opportus/service-pack-for-storefront/issues/5) with PHP versions lower than 5.5.16 which were not loading classes. Thanks [@huseyinduz](https://github.com/huseyinduz).

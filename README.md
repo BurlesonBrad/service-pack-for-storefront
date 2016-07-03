@@ -166,6 +166,12 @@ Thanks also to those who won't donate but simply appreciate my work !
 
 ## Changelog
 
+**Version 0.1.5 Beta** - 03/07/2016
+
+- Enhancement - Improved newsletter subscriber widget notification
+- Enhancement - Improved contact form submission notification
+- Enhancement - GitHub [Issue #5](https://github.com/opportus/service-pack-for-storefront/issues/5)'s fix optimization
+- Fix - readme.txt
 
 **Version 0.1.4 Beta** - 30/06/2016
 
