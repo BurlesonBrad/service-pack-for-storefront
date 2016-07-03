@@ -17,7 +17,7 @@ jQuery( document ).ready( function( $ ) {
 				data: form.serialize(),
 				success: function( response ) {
 					
-					$( 'body' ).append( '<div id="spfs-contact-form-noty"></div>' );
+					$( '<div id="spfs-contact-form-noty"></div>' ).insertAfter( '#spfs-contact-form' );
 					
 					if ( response.success === true ) {
 						$( '#spfs-contact-form-noty' ).attr( 'class', 'spfs-contact-form-noty-success' ).html( response.data );
@@ -39,10 +39,8 @@ jQuery( document ).ready( function( $ ) {
 						} );
 					}
 					$( '#spfs-contact-form-noty' ).slideDown();
-					$( '#spfs-contact-form-noty' ).delay( 10000 ).slideUp();
 				}
 			} );
-			
 			return false;
 		} );
 	}

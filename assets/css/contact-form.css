@@ -31,15 +31,14 @@
 }
 
 #spfs-contact-form-noty {
+  border-radius: 2px;
 	color: #fff;
-	display: none;
+  display: none;
 	font-size: 15px;
-	padding: 15px;
-	position: fixed;
+  margin-bottom: 5px;
+  padding: 10px 0 10px;
 	text-align: center;
-	top: 0;
 	width: 100%;
-	z-index: 999;
 }
 #spfs-contact-form-noty.spfs-contact-form-noty-error {
 	background-color: #FF0000;
