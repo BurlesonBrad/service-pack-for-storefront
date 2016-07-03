@@ -25,7 +25,7 @@ jQuery( document ).ready( function( $ ) {
 						$( '#spfs-widget-newsletter-noty' ).attr( 'class', 'spfs-widget-newsletter-noty-error' ).html( response.data );
 					}
 					$( '#spfs-widget-newsletter-noty' ).slideDown();
-					$( '#spfs-widget-newsletter-noty' ).delay( 10000 ).slideUp();
+					$( '#spfs-widget-newsletter-noty' ).delay( 5000 ).slideUp();
 				}
 			} );
 			
