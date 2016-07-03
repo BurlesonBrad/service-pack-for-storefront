@@ -8,8 +8,7 @@ License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=R8R7Y9R2C79J8
 
-Service Pack for Storefront Beta adds modulable basic functionalities to
-your WooCommerce/Storefront eCommerce site.
+Adds modulable basic functionalities to your WooCommerce/Storefront eCommerce site.
 
 == Description ==
 Includes most of extra basic functionalities a e-commerce should have...
