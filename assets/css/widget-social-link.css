@@ -3,6 +3,8 @@
 }
 
 .spfs-widget-social-link-list {
+  display: flex;
+  justify-content: flex-start;
   list-style: none;
   margin-left: 0;
 }
@@ -14,7 +16,7 @@
 }
 
 .spfs-widget-social-link-list a:hover {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 
 .spfs-widget-social-link-list a:before {
