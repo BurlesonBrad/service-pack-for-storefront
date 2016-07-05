@@ -50,7 +50,7 @@ class SPFS_Widget_Newsletter extends WP_Widget {
 		echo $args['after_title']; ?>
 		
     <form class="spfs-widget-newsletter">
-      <input name="spfs_widget_newsletter_email" placeholder="<?php esc_attr_e( 'Your email address', 'spfs' ); ?>" type="email" class="spfs-widget-newsletter-email" />
+      <input name="spfs_widget_newsletter_email" placeholder="<?php esc_attr_e( 'Your email address', 'service-pack-for-storefront' ); ?>" type="email" class="spfs-widget-newsletter-email" />
       <input type="hidden" name="action" value="spfs_widget_newsletter_save_email" />
 			<?php wp_nonce_field( 'spfs_widget_newsletter_nonce', 'security' ); ?>
 			<button type="submit" class="spfs-widget-newsletter-send"></button>
