@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: Service Pack for Storefront\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: Tue Jun 28 2016 04:04:23 GMT+0200 (CEST)\n"
-"POT-Revision-Date: Wed Jun 29 2016 20:39:43 GMT+0200 (CEST)\n"
+"POT-Revision-Date: Tue Jul 05 2016 17:49:30 GMT+0200 (CEST)\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -40,28 +40,28 @@ msgstr ""
 msgid "opportus"
 msgstr ""
 
-#: ../class-spfs.php:235
+#: ../class-spfs.php:246
 #, php-format
 msgid "Thank you for using %s, hope you enjoy it !"
 msgstr ""
 
-#: ../class-spfs.php:236
+#: ../class-spfs.php:247
 #, php-format
 msgid "If you have a question, a suggestion, or if you need help, here is the %s."
 msgstr ""
 
-#: ../class-spfs.php:236
+#: ../class-spfs.php:247
 msgid "support forum"
 msgstr ""
 
-#: ../class-spfs.php:237
+#: ../class-spfs.php:248
 #, php-format
 msgid ""
 "To allow me to spend more time developing this plugin for you, a little %s "
 "would be great !"
 msgstr ""
 
-#: ../class-spfs.php:237
+#: ../class-spfs.php:248
 msgid "donation"
 msgstr ""
 
@@ -174,7 +174,7 @@ msgid ""
 "menu section."
 msgstr ""
 
-#: ../admin/class-spfs-settings.php:131 ../modules/class-spfs-store-credit.php:63 
+#: ../admin/class-spfs-settings.php:131 ../modules/class-spfs-store-credit.php:63
 #: ../modules/class-spfs-store-credit.php:192 ../modules/class-spfs-store-credit.
 #: php:365
 msgid "Store Credit"
@@ -382,7 +382,7 @@ msgid "Search Slides"
 msgstr ""
 
 #: ../modules/class-spfs-slider.php:99 ../modules/class-spfs-slider.php:100 ..
-#: /modules/class-spfs-slider.php:101 ../modules/class-spfs-slider.php:108
+#: modules/class-spfs-slider.php:101 ../modules/class-spfs-slider.php:108
 msgid "Slide"
 msgstr ""
 
