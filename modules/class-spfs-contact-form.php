@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * A simple and straightforward contact form that you can add anywhere with its shortcode.
  *
  * @class    SPFS_Contact_Form
- * @since    0.0.1
+ * @since    0.1.6
  * @package  SPFS/Modules
  * @category Modules
  * @author   Opportus
@@ -121,7 +121,7 @@ class SPFS_Contact_Form {
     // Email Validation & Sanitization...
     if ( ! empty( $email) ) {
       if ( strlen( $email ) <= 30 ) {
-        if ( preg_match( '#^[a-z0-9_.-]+@[a-z0-9_.-]{2,}\.[a-z]{2,4}$#', $email ) ) {
+        if ( preg_match( '/^[a-z0-9_.-]+@[a-z0-9_.-]{2,}\.[a-z]{2,4}$/', $email ) ) {
           $valid_email = sanitize_email( $email );
         }
         else {
@@ -139,7 +139,7 @@ class SPFS_Contact_Form {
     // Message Validation & Sanitization...
 	  if ( ! empty( $message ) ) {
       if ( strlen( $message ) <= 2000 ) {
-        if ( preg_match( '#^.+$#s', $message ) ) {
+        if ( preg_match( '/^.+$/s', $message ) ) {
           $valid_message = wp_kses( nl2br( $message ), array( 'br' => array() ) );
         }
         else {
@@ -157,7 +157,7 @@ class SPFS_Contact_Form {
     // Name Validation & Sanitization...
 	  if ( ! empty( $name ) ) {  
       if ( strlen( $name ) <= 60 ) {
-        if ( preg_match( '#^[a-zA-ZÀ-ÖØ-öø-ÿœŒ\s]+$#', $name ) ) {
+        if ( preg_match( '/^[\p{L}\s]+$/', $name ) ) {
           $valid_name = sanitize_text_field( $name );
 				  $valid_message .= '<p>' . esc_html__( 'Name', 'service-pack-for-storefront' )  . ': ' . esc_html( $valid_name ) . '</p>';
 			  } else {
