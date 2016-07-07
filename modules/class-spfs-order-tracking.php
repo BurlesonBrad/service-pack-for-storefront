@@ -160,7 +160,7 @@ class SPFS_Order_Tracking {
    */
   public function meta_box() {
     if ( ! isset( $this->order_tracking_options ) ) {
-      echo '<p>' . sprintf( __( 'You first need to add new shippers on the %s.', 'service-pack-for-storefront' ), $link = '<a href="' . esc_url( admin_url( 'options-general.php?page=spfs_settings_page' ) ) . '">' . esc_html__( 'settings page', 'service-pack-for-storefront' ) ) . '</p>';
+      echo '<p>' . sprintf( __( 'You first need to add new shippers on the %s.', 'service-pack-for-storefront' ), '<a href="' . esc_url( admin_url( 'options-general.php?page=spfs_settings_page' ) ) . '" target="_blank">' . __( 'settings page', 'service-pack-for-storefront' ) . '</a>' ) . '</p>';
       
       return;
     }
