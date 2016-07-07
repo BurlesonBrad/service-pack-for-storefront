@@ -156,6 +156,13 @@ Thanks also to those who won't donate but simply appreciate my work !
 
 ## Changelog
 
+**Version 0.1.6 Beta** - 07/07/2016
+
+- Tweak - Unicode support for data validation in various modules
+- Fix - Newsletter widget placeholder domain name
+- Fix - Social links widget layout unstability
+- Enhancement - Language template and french locale update
+
 **Version 0.1.5 Beta** - 03/07/2016
 
 - Enhancement - Improved newsletter subscriber widget notification
