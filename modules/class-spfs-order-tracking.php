@@ -201,7 +201,7 @@ class SPFS_Order_Tracking {
     $track_shipper = sanitize_text_field( $_POST['spfs_order_tracking_shipper'] );
     $track_number = sanitize_text_field( $_POST['spfs_order_tracking_number'] );
     
-    if ( preg_match( '#^[a-z0-9_]{2,20}$#i', $track_shipper ) && preg_match( '#^[a-z0-9]{5,50}$#i', $track_number ) ) {
+    if ( preg_match( '/^[a-zA-Z\p{Cyrillic}0-9\s\-_]{2,20}+$/u', $track_shipper ) && preg_match( '#^[a-z0-9]{5,50}$#i', $track_number ) ) {
       update_post_meta( $post_ID, 'spfs_order_tracking_shipper', $track_shipper );
       update_post_meta( $post_ID, 'spfs_order_tracking_number', $track_number );
     }
