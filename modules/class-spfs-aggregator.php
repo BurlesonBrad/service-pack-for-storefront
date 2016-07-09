@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Aggregator Module.
  * 
- * Display posts aggregator on the front page.
+ * Display posts aggregator on the Storefront front page.
  * Display reviews aggregator on product categories.
  *
  * @class    SPFS_Aggregator
@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package  SPFS/Modules
  * @category Modules
  * @author   Opportus
+ * @todo     Aggregates in a carousel more posts and reviews.
  */
 class SPFS_Aggregator {
 

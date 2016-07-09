@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package  SPFS/Modules
  * @category Modules
  * @author   Opportus
+ * @todo     Propose in settings which sidebar to activate/deactivate and make a default sidebar.
  */
 class SPFS_Dynamic_Sidebar {
 

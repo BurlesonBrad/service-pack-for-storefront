@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category Modules
  * @author   Opportus
  * @todo     Implement email attachment...
+ * @todo     Add contact form layout settings.
  */
 class SPFS_Contact_Form {
 

@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category Modules
  * @author   Opportus
  * @todo     Add more sharers.
+ * @todo     Display number of shares under each sharer button.
  */
 class SPFS_Sharer {
 
