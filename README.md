@@ -4,6 +4,7 @@
 ## Usefull Links
 
 [Wiki](https://github.com/opportus/service-pack-for-storefront/wiki)
+
 [WordPress Plugin Directory](https://wordpress.org/plugins/service-pack-for-storefront)
 
 ## Changelog
