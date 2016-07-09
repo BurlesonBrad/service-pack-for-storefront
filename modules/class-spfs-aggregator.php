@@ -15,7 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package  SPFS/Modules
  * @category Modules
  * @author   Opportus
- * @todo     Aggregates in a carousel more posts and reviews.
+ * @todo     Aggregates more posts and reviews in a sliding show.
+ * @todo     Styling in customizer.
+ * @todo     Give the possibility in the customizer to choose which aggregator (posts, reviews, both or nothing) to show on which kind of pages.
  */
 class SPFS_Aggregator {
 

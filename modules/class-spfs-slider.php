@@ -12,7 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package  SPFS/Modules
  * @category Modules
  * @author   Opportus
- * @todo     Add setting 'Show on the Storefront front page?'.
+ * @todo     Propose in customizer 'Show on the Storefront front page?'.
+ * @todo     Propose styling options in customizer.
  */
 class SPFS_Slider {
 

@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author   Opportus
  * @todo     Add more sharers.
  * @todo     Display number of shares under each sharer button.
+ * @todo     Propose different layouts in customizer.
  */
 class SPFS_Sharer {
 
